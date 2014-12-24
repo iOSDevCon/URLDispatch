@@ -9,6 +9,7 @@
 #import <URLDispatch/BasicURLDispatcher.h>
 #import <URLDispatch/URLDispatchContext.h>
 #import <URLDispatch/URLDispatchHistory.h>
+#import <URLDispatch/URLDispatchException.h>
 #include <assert.h>
 
 
@@ -36,28 +37,43 @@
     return self;
 }
 
+- (void)checkFactory:(id<URLDispatchDelegateFactory>)factory
+{
+    if(factory == nil)
+        @throw [URLDispatchException exceptionWithReason:@"URLDispatchDelegateFactory should not be nil"];
+    
+    if (factory.dispatchUrls == nil)
+        @throw [URLDispatchException exceptionWithReason:@"URLDispatchDelegateFactory's dispatchUrls property should not be nil"];
+    
+    if([factory.dispatchUrls count] > 0)
+        @throw [URLDispatchException exceptionWithReason:@"URLDispatchDelegateFactory's dispatchUrls should not be empty"];
+}
+
+- (void)checkRegisteredUrl:(NSString*)url
+{
+    if(url == nil || [url length] == 0)
+        @throw [URLDispatchException exceptionWithReason:@"The factory's url should not be nil or empty"];
+    
+    if(![_navigatables valueForKey:url])
+        @throw [URLDispatchException exceptionWithReason:[NSString stringWithFormat:@"The factory's url %@ was not registered", url]];
+}
+
 - (void)registerFactory:(id<URLDispatchDelegateFactory>)factory
 {
-    //these assert should be modified exception
-    assert(factory != nil);
-    assert(factory.dispatchUrls != nil);
-    assert([factory.dispatchUrls count] > 0);
-   
+    [self checkFactory:factory];
+    
     for (NSString *url in factory.dispatchUrls)
     {
         //skip registered url, should warn the user for the duplicated url
         if([_navigatables valueForKey:url])
-            continue;
+            @throw [URLDispatchException exceptionWithReason:[NSString stringWithFormat:@"The factory's url %@ was registered", url]];
         [_navigatables setValue:factory forKey:url];
     }
 }
 
 - (void)changeRegisterFactory:(id<URLDispatchDelegateFactory>)factory
 {
-    //these assert should be modified exception
-    assert(factory != nil);
-    assert(factory.dispatchUrls != nil);
-    assert([factory.dispatchUrls count] > 0);
+    [self checkFactory:factory];
     
     for (NSString* url in factory.dispatchUrls) {
         [_navigatables setValue:factory forKey:url];
@@ -66,20 +82,14 @@
 
 - (void)unregisterUrl:(NSString*)url
 {
-    //these assert should be modified exception
-    assert(url != nil);
-    assert([_navigatables valueForKey:url]);
+    [self checkRegisteredUrl:url];
     
     [_navigatables removeObjectForKey:url];
 }
 
 - (void)unregisterFactory:(id<URLDispatchDelegateFactory>)factory;
 {
-    //these assert should be modified exception
-    assert(factory != nil);
-    
-    assert(factory.dispatchUrls != nil);
-    assert([factory.dispatchUrls count] > 0);
+    [self checkFactory:factory];
     
     for (NSString* url in factory.dispatchUrls) {
         [self unregisterUrl:url];
@@ -88,14 +98,20 @@
 
 - (void)gotoUrl:(NSString*)url withArgs:(NSDictionary*)args;
 {
-    //these assert should be modified exception
-    assert([_navigatables valueForKey:url]);
+    [self checkRegisteredUrl:url];
+    
     id<URLDispatchDelegateFactory> factory = [_navigatables objectForKey:url];
     id<URLDispatchDelegate> delegate = [factory createWithDispatcher:self url:url];
+    
+    if (delegate == nil)
+        @throw [URLDispatchException exceptionWithReason:[NSString stringWithFormat:@"URLDispatchDelegate of url %@ creation failed!", url]];
+    
     URLDispatchContext *ctx = [[URLDispatchContext alloc] initWith:args];
     ctx.PreviousUrl = _currentDelegate.dispatchUrl;
     ctx.CurrentUrl = url;
+    
     [delegate gotoWithContext:ctx];
+    
     [_history addObject:[[URLDispatchHistory alloc] initWithContext:ctx url:url]];
 }
 
