@@ -1,3 +1,2 @@
 language: objective-c
-script:
-xctool -project URLDispatch/URLDispatch.xcodeproj -scheme URLDispatch -sdk iphonesimulator build test
+script: xctool -project URLDispatch/URLDispatch.xcodeproj -scheme URLDispatch -sdk iphonesimulator build test
