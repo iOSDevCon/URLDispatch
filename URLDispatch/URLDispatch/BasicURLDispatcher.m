@@ -26,9 +26,17 @@
     return _currentDelegate;
 }
 
-- (id)initWithRootDelegate:(id<URLDispatchDelegate>)rootDelegate
+- (id)init
 {
     self = [super init];
+    _delegateFactories = [[NSMutableDictionary alloc] init];
+    _history = [[NSMutableArray alloc] init];
+    return self;
+}
+
+- (id)initWithRootDelegate:(id<URLDispatchDelegate>)rootDelegate
+{
+    self = [self init];
     if(self)
     {
         _rootDelegate = rootDelegate;
@@ -45,7 +53,7 @@
     if (factory.dispatchUrls == nil)
         @throw [URLDispatchException exceptionWithReason:@"URLDispatchDelegateFactory's dispatchUrls property should not be nil"];
     
-    if([factory.dispatchUrls count] > 0)
+    if([factory.dispatchUrls count] == 0)
         @throw [URLDispatchException exceptionWithReason:@"URLDispatchDelegateFactory's dispatchUrls should not be empty"];
 }
 
@@ -54,7 +62,7 @@
     if(url == nil || [url length] == 0)
         @throw [URLDispatchException exceptionWithReason:@"The factory's url should not be nil or empty"];
     
-    if(![_navigatables valueForKey:url])
+    if(![_delegateFactories valueForKey:url])
         @throw [URLDispatchException exceptionWithReason:[NSString stringWithFormat:@"The factory's url %@ was not registered", url]];
 }
 
@@ -65,9 +73,9 @@
     for (NSString *url in factory.dispatchUrls)
     {
         //skip registered url, should warn the user for the duplicated url
-        if([_navigatables valueForKey:url])
+        if([_delegateFactories valueForKey:url])
             @throw [URLDispatchException exceptionWithReason:[NSString stringWithFormat:@"The factory's url %@ was registered", url]];
-        [_navigatables setValue:factory forKey:url];
+        [_delegateFactories setValue:factory forKey:url];
     }
 }
 
@@ -76,7 +84,7 @@
     [self checkFactory:factory];
     
     for (NSString* url in factory.dispatchUrls) {
-        [_navigatables setValue:factory forKey:url];
+        [_delegateFactories setValue:factory forKey:url];
     }
 }
 
@@ -84,7 +92,7 @@
 {
     [self checkRegisteredUrl:url];
     
-    [_navigatables removeObjectForKey:url];
+    [_delegateFactories removeObjectForKey:url];
 }
 
 - (void)unregisterFactory:(id<URLDispatchDelegateFactory>)factory;
@@ -100,7 +108,7 @@
 {
     [self checkRegisteredUrl:url];
     
-    id<URLDispatchDelegateFactory> factory = [_navigatables objectForKey:url];
+    id<URLDispatchDelegateFactory> factory = [_delegateFactories objectForKey:url];
     id<URLDispatchDelegate> delegate = [factory createWithDispatcher:self url:url];
     
     if (delegate == nil)
@@ -110,9 +118,19 @@
     ctx.PreviousUrl = _currentDelegate.dispatchUrl;
     ctx.CurrentUrl = url;
     
-    [delegate gotoWithContext:ctx];
+    if (_rootDelegate == nil) {
+        _rootDelegate = delegate;
+    }
+    _currentDelegate = delegate;
+    
+    [_currentDelegate gotoWithContext:ctx];
     
     [_history addObject:[[URLDispatchHistory alloc] initWithContext:ctx url:url]];
+}
+
+- (NSArray*)dispatchHistory
+{
+    return _history;
 }
 
 @end

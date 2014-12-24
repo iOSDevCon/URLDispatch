@@ -15,7 +15,7 @@
     NSString* _url;
 }
 
-@property (readonly) URLDispatchContext* Context;
+@property (readonly) URLDispatchContext* context;
 @property (readonly) NSString* url;
 
 - (id)initWithContext:(URLDispatchContext*)ctx url:(NSString*)url;

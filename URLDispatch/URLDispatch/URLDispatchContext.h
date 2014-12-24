@@ -13,8 +13,8 @@
    NSMutableDictionary *_arguments;
 }
 
-@property NSString* PreviousUrl;
-@property NSString* CurrentUrl;
+@property NSString* previousUrl;
+@property NSString* currentUrl;
 
 - (id)initWith:(NSDictionary *)args;
 - (id)init;

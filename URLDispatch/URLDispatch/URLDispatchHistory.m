@@ -10,6 +10,16 @@
 
 @implementation URLDispatchHistory
 
+-(URLDispatchContext*)context
+{
+    return _context;
+}
+
+-(NSString*)url
+{
+    return _url;
+}
+
 - (id)initWithContext:(URLDispatchContext*)ctx url:(NSString*)url
 {
     self = [super init];

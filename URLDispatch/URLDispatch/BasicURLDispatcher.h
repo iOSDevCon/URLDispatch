@@ -14,7 +14,7 @@
 {
     id<URLDispatchDelegate> _rootDelegate;
     id<URLDispatchDelegate> _currentDelegate;
-    NSMutableDictionary* _navigatables;
+    NSMutableDictionary* _delegateFactories;
     NSMutableArray* _history;
     
 }
@@ -22,11 +22,13 @@
 @property (readonly) id<URLDispatchDelegate> RootDelegate;
 @property (readonly) id<URLDispatchDelegate> CurrentDelegate;
 
+- (id)init;
 - (id)initWithRootDelegate:(id<URLDispatchDelegate>)rootDelegate;
 - (void)registerFactory:(id<URLDispatchDelegateFactory>)factory;
 - (void)changeRegisterFactory:(id<URLDispatchDelegateFactory>)factory;
 - (void)unregisterUrl:(NSString*)url;
 - (void)unregisterFactory:(id<URLDispatchDelegateFactory>)factory;
 - (void)gotoUrl:(NSString*)url withArgs:(NSDictionary*)args;
+- (NSArray*)dispatchHistory;
 
 @end

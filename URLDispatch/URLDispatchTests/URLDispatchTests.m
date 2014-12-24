@@ -10,6 +10,116 @@
 #import <XCTest/XCTest.h>
 #import <URLDispatch/URLDispatch.h>
 
+
+@interface MockDispatchableObjectFactory1 : NSObject<URLDispatchDelegateFactory>
+{
+}
+
+@property (readonly) NSArray* dispatchUrls;
+
+-(id<URLDispatchDelegate>)createWithDispatcher:(id<URLDispatcher>)navigator url:(NSString*)url;
+
+@end
+
+@interface MockDispatchableObject1 : NSObject<URLDispatchDelegate>
+{
+    __weak id<URLDispatcher> _dispatcher;
+    NSString *_dispatchUrl;
+}
+
+@property (readonly) NSString* dispatchUrl;
+@property (readonly) id<URLDispatcher> Dispatcher;
+
+@property URLDispatchContext *gotoContext;
+@property URLDispatchContext *backContext;
+@property URLDispatchContext *reloadContext;
+
+- (id)initWith:(id<URLDispatcher>)dispatcher url:(NSString*)url;
+
+- (void)gotoWithContext:(URLDispatchContext*)context;
+- (void)BackWithContext:(URLDispatchContext*)context;
+- (void)ReloadWithContext:(URLDispatchContext*)context;
+
+
+@end
+
+@interface MockDispatchableObject2 : MockDispatchableObject1
+
+@end
+
+
+@implementation MockDispatchableObjectFactory1
+
+-(NSArray*) dispatchUrls
+{
+    return @[@"Object1",@"Object2"];
+}
+
+
+-(id<URLDispatchDelegate>)createWithDispatcher:(id<URLDispatcher>)dispatcher url:(NSString*)url
+{
+    if ([url isEqualToString:@"Object1"]) {
+        
+        return [[MockDispatchableObject1 alloc] initWith:dispatcher url:url];
+        
+    }
+    else if ([url isEqualToString:@"Object2"])
+    {
+        return [[MockDispatchableObject2 alloc] initWith:dispatcher url:url];
+    }
+    return nil;
+}
+
+
+@end
+
+@implementation MockDispatchableObject1
+
+@synthesize gotoContext;
+@synthesize backContext;
+@synthesize reloadContext;
+
+- (id)initWith:(id<URLDispatcher>)dispatcher url:(NSString*)url
+{
+    self  = [super init];
+    _dispatcher = dispatcher;
+    _dispatchUrl = url;
+    return self;
+}
+
+-(NSString*)dispatchUrl
+{
+    return _dispatchUrl;
+}
+
+-(id<URLDispatcher>)Dispatcher
+{
+    return _dispatcher;
+}
+
+- (void)gotoWithContext:(URLDispatchContext*)context
+{
+    self.gotoContext = context;
+}
+
+- (void)BackWithContext:(URLDispatchContext*)context
+{
+    self.backContext = context;
+}
+
+- (void)ReloadWithContext:(URLDispatchContext*)context
+{
+    self.reloadContext = context;
+}
+
+@end
+
+@implementation MockDispatchableObject2
+
+@end
+
+
+
 @interface URLDispatchTests : XCTestCase
 
 @end
@@ -28,7 +138,35 @@
 
 - (void)testBasicURLDispatcher {
     // This is an example of a functional test case.
-    XCTAssert(YES, @"Pass");
+    
+    BasicURLDispatcher *dispatcher = [[BasicURLDispatcher alloc] init];
+    [dispatcher registerFactory:[[MockDispatchableObjectFactory1 alloc] init]];
+    [dispatcher gotoUrl:@"Object1" withArgs:nil];
+    MockDispatchableObject1 *mockObj1 = (MockDispatchableObject1*)dispatcher.CurrentDelegate;
+    XCTAssertNil(mockObj1.gotoContext.previousUrl);
+    XCTAssertEqual(@"Object1", mockObj1.gotoContext.currentUrl);
+    
+    [dispatcher gotoUrl:@"Object2" withArgs:nil];
+    MockDispatchableObject1 *mockObj2 = (MockDispatchableObject1*)dispatcher.CurrentDelegate;
+    XCTAssertEqual(@"Object1", mockObj2.gotoContext.previousUrl);
+    XCTAssertEqual(@"Object2", mockObj2.gotoContext.currentUrl);
+    
+    NSArray *history = [dispatcher dispatchHistory];
+    XCTAssertEqual(2, [history count]);
+    
+    URLDispatchHistory* ctx1 = (URLDispatchHistory*)[history objectAtIndex:0];
+    XCTAssertEqual(@"Object1", ctx1.url);
+    XCTAssertNotNil(ctx1.context);
+    XCTAssertNil(ctx1.context.previousUrl);
+    XCTAssertEqual(@"Object1", ctx1.context.currentUrl);
+    
+    
+    URLDispatchHistory* ctx2 = (URLDispatchHistory*)[history objectAtIndex:1];
+    XCTAssertEqual(@"Object2", ctx2.url);
+    XCTAssertNotNil(ctx2.context);
+    XCTAssertEqual(@"Object1", ctx2.context.previousUrl);
+    XCTAssertEqual(@"Object2", ctx2.context.currentUrl);
+    
 }
 
 - (void)testPerformanceExample {

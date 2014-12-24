@@ -34,6 +34,7 @@
 - (void)unregisterUrl:(NSString*)url;
 - (void)unregisterFactory:(id<URLDispatchDelegateFactory>)navigateableFactory;
 - (void)gotoUrl:(NSString*)url withArgs:(NSDictionary*)args;
+- (NSArray*)dispatchHistory;
 
 @end
 
@@ -41,6 +42,6 @@
 
 @property (readonly) NSArray* dispatchUrls;
 
--(id<URLDispatchDelegate>)createWithDispatcher:(id<URLDispatcher>)navigator url:(NSString*)url;
+-(id<URLDispatchDelegate>)createWithDispatcher:(id<URLDispatcher>)dispatcher url:(NSString*)url;
 
 @end

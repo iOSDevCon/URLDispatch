@@ -7,11 +7,12 @@
 //
 
 #import <URLDispatch/URLDispatchContext.h>
+#import <URLDispatch/URLDispatchException.h>
 
 @implementation URLDispatchContext
 
-@synthesize PreviousUrl;
-@synthesize CurrentUrl;
+@synthesize previousUrl;
+@synthesize currentUrl;
 
 - (id)initWith:(NSDictionary *)args
 {
@@ -35,11 +36,20 @@
 
 - (NSObject*)argumentOfName:(NSString*)name
 {
+    if (name == nil || [name length] == 0)
+        @throw [URLDispatchException exceptionWithReason:@"argument name should not be nil or empty"];
+    
     return [_arguments valueForKey:name];
 }
 
 - (void)setArgumentName:(NSString*)name Value:(NSObject*)value
 {
+    if (name == nil || [name length] == 0)
+        @throw [URLDispatchException exceptionWithReason:@"argument name should not be nil or empty"];
+    
+    if (value == nil)
+        @throw [URLDispatchException exceptionWithReason:@"argument value should not be nil"];
+    
     [_arguments setValue:value forKey:name];
 }
 
