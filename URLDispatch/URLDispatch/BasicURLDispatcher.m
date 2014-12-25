@@ -95,6 +95,7 @@
     [_delegateFactories removeObjectForKey:url];
 }
 
+//have an issue that unregister the regsitered url with another factroy with the same url
 - (void)unregisterFactory:(id<URLDispatchDelegateFactory>)factory;
 {
     [self checkFactory:factory];

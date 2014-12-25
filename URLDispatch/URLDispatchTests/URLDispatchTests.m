@@ -11,6 +11,83 @@
 #import <URLDispatch/URLDispatch.h>
 
 
+@interface MockDispatchableNullUrlFactory : NSObject<URLDispatchDelegateFactory>
+{
+}
+
+@property (readonly) NSArray* dispatchUrls;
+
+-(id<URLDispatchDelegate>)createWithDispatcher:(id<URLDispatcher>)navigator url:(NSString*)url;
+
+
+@end
+
+@interface MockDispatchableEmptyUrlFactory : MockDispatchableNullUrlFactory
+
+@end
+
+@interface MockDispatchableDupUrlFactory : MockDispatchableNullUrlFactory
+
+@end
+
+@interface MockDispatchableCreateNilFactory : MockDispatchableNullUrlFactory
+
+@end
+
+@interface MockDispatchableObject4Factory : MockDispatchableNullUrlFactory
+
+@end
+
+@implementation MockDispatchableNullUrlFactory
+
+-(NSArray*) dispatchUrls
+{
+    return nil;
+}
+
+-(id<URLDispatchDelegate>)createWithDispatcher:(id<URLDispatcher>)dispatcher url:(NSString*)url
+{
+    return nil;
+}
+
+@end
+
+@implementation MockDispatchableEmptyUrlFactory
+
+-(NSArray*) dispatchUrls
+{
+    return @[];
+}
+
+@end
+
+@implementation MockDispatchableDupUrlFactory
+
+-(NSArray*) dispatchUrls
+{
+    return @[@"Object1"];
+}
+
+@end
+
+@implementation MockDispatchableCreateNilFactory
+
+-(NSArray*) dispatchUrls
+{
+    return @[@"Object3"];
+}
+
+@end
+
+@implementation MockDispatchableObject4Factory
+
+-(NSArray*) dispatchUrls
+{
+    return @[@"Object4"];
+}
+
+@end
+
 @interface MockDispatchableObjectFactory1 : NSObject<URLDispatchDelegateFactory>
 {
 }
@@ -167,6 +244,44 @@
     XCTAssertEqual(@"Object1", ctx2.context.previousUrl);
     XCTAssertEqual(@"Object2", ctx2.context.currentUrl);
     
+}
+
+- (void)testBasicURLDispatcherExp {
+    
+    BasicURLDispatcher *dispatcher = [[BasicURLDispatcher alloc] init];
+    XCTAssertThrowsSpecific([dispatcher registerFactory:nil],URLDispatchException);
+    XCTAssertThrowsSpecific([dispatcher registerFactory:[[MockDispatchableNullUrlFactory alloc] init]],URLDispatchException);
+    XCTAssertThrowsSpecific([dispatcher registerFactory:[[MockDispatchableEmptyUrlFactory alloc] init]],URLDispatchException);
+    
+    XCTAssertThrowsSpecific([dispatcher changeRegisterFactory:nil],URLDispatchException);
+    XCTAssertThrowsSpecific([dispatcher changeRegisterFactory:[[MockDispatchableNullUrlFactory alloc] init]],URLDispatchException);
+    XCTAssertThrowsSpecific([dispatcher changeRegisterFactory:[[MockDispatchableEmptyUrlFactory alloc] init]],URLDispatchException);
+    
+    XCTAssertNoThrow([dispatcher registerFactory:[[MockDispatchableObjectFactory1 alloc] init]]);
+    
+    XCTAssertThrowsSpecific([dispatcher registerFactory:[[MockDispatchableDupUrlFactory alloc] init]],URLDispatchException);
+ 
+    XCTAssertNoThrow([dispatcher registerFactory:[[MockDispatchableCreateNilFactory alloc] init]]);
+    XCTAssertThrowsSpecific([dispatcher registerFactory:[[MockDispatchableCreateNilFactory alloc] init]],URLDispatchException);
+    
+    XCTAssertThrowsSpecific([dispatcher gotoUrl:@"Object3" withArgs:nil],URLDispatchException);
+    
+    XCTAssertThrowsSpecific([dispatcher gotoUrl:nil withArgs:nil],URLDispatchException);
+    
+    XCTAssertThrowsSpecific([dispatcher unregisterUrl:@"Object4"],URLDispatchException);
+    
+    XCTAssertThrowsSpecific([dispatcher unregisterUrl:nil],URLDispatchException);
+    
+    XCTAssertThrowsSpecific([dispatcher unregisterFactory:nil],URLDispatchException);
+    
+    XCTAssertNoThrow([dispatcher unregisterUrl:@"Object3"]);
+    
+    XCTAssertNoThrow([dispatcher registerFactory:[[MockDispatchableCreateNilFactory alloc] init]]);
+    
+    XCTAssertNoThrow([dispatcher registerFactory:[[MockDispatchableObject4Factory alloc] init]]);
+    
+    
+    XCTAssertNoThrow([dispatcher unregisterFactory:[[MockDispatchableCreateNilFactory alloc] init]]);
 }
 
 - (void)testPerformanceExample {
