@@ -1,34 +1,23 @@
 //
-//  URLDispatchDelegate.h
+//  URLDispatchNavigationViewController.h
 //  URLDispatch
 //
-//  Created by Robert Qiu on 12/24/14.
+//  Created by Robert Qiu on 12/25/14.
 //  Copyright (c) 2014 iOSDevCon. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import <URLDispatch/URLDispatchContext.h>
+#import <UIKit/UIKit.h>
+#import <URLDispatch/URLDispatchDelegate.h>
 
-@protocol URLDispatcher;
-
-@protocol URLDispatchDelegate <NSObject>
-
-@property (readonly) NSString* dispatchUrl;
-@property (readonly) id<URLDispatcher> dispatcher;
-
-- (void)gotoWithContext:(URLDispatchContext*)context;
-- (void)backWithContext:(URLDispatchContext*)context;
-- (void)reloadWithContext:(URLDispatchContext*)context;
-
-@end
-
-@protocol URLDispatchDelegateFactory;
-
-@protocol URLDispatcher<NSObject>
+@interface URLDispatchNavigationViewController : UINavigationController<URLDispatcher>
+{
+    id<URLDispatcher> _innerDispatcher;
+}
 
 @property (readonly) id<URLDispatchDelegate> rootDelegate;
 @property (readonly) id<URLDispatchDelegate> currentDelegate;
-    
+
+- (id)initWithInnerDispacher:(id<URLDispatcher>)innerDispatcher;
 - (void)registerFactory:(id<URLDispatchDelegateFactory>)navigateableFactory;
 - (void)changeRegisterFactory:(id<URLDispatchDelegateFactory>)navigateableFactory;
 - (void)unregisterUrl:(NSString*)url;
@@ -38,13 +27,5 @@
 - (void)dispatchDelegate:(id<URLDispatchDelegate>)delegate withArgs:(NSDictionary*)args;
 - (void)gotoUrl:(NSString*)url withArgs:(NSDictionary*)args;
 - (NSArray*)dispatchHistory;
-
-@end
-
-@protocol URLDispatchDelegateFactory<NSObject>
-
-@property (readonly) NSArray* dispatchUrls;
-
--(id<URLDispatchDelegate>)createWithDispatcher:(id<URLDispatcher>)dispatcher url:(NSString*)url;
 
 @end

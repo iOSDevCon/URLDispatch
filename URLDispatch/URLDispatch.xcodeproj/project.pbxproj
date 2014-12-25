@@ -14,6 +14,8 @@
 		E10E28FD1A4BE7C600172D6B /* URLParser.h in Headers */ = {isa = PBXBuildFile; fileRef = E10E28FB1A4BE7C600172D6B /* URLParser.h */; };
 		E10E28FE1A4BE7C600172D6B /* URLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = E10E28FC1A4BE7C600172D6B /* URLParser.m */; };
 		E10E29021A4BED9000172D6B /* URLParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E10E29011A4BED9000172D6B /* URLParserTests.m */; };
+		E10E29051A4C5FE700172D6B /* URLDispatchNavigationViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = E10E29031A4C5FE700172D6B /* URLDispatchNavigationViewController.h */; };
+		E10E29061A4C5FE700172D6B /* URLDispatchNavigationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E10E29041A4C5FE700172D6B /* URLDispatchNavigationViewController.m */; };
 		E15F8EB51A4AA2EA00C4645C /* URLDispatch.h in Headers */ = {isa = PBXBuildFile; fileRef = E15F8EB41A4AA2EA00C4645C /* URLDispatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E15F8EBB1A4AA2EA00C4645C /* URLDispatch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E15F8EAF1A4AA2EA00C4645C /* URLDispatch.framework */; };
 		E15F8EC21A4AA2EA00C4645C /* URLDispatchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E15F8EC11A4AA2EA00C4645C /* URLDispatchTests.m */; };
@@ -43,6 +45,8 @@
 		E10E28FB1A4BE7C600172D6B /* URLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLParser.h; sourceTree = "<group>"; };
 		E10E28FC1A4BE7C600172D6B /* URLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = URLParser.m; sourceTree = "<group>"; };
 		E10E29011A4BED9000172D6B /* URLParserTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = URLParserTests.m; sourceTree = "<group>"; };
+		E10E29031A4C5FE700172D6B /* URLDispatchNavigationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLDispatchNavigationViewController.h; sourceTree = "<group>"; };
+		E10E29041A4C5FE700172D6B /* URLDispatchNavigationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = URLDispatchNavigationViewController.m; sourceTree = "<group>"; };
 		E15F8EAF1A4AA2EA00C4645C /* URLDispatch.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = URLDispatch.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E15F8EB31A4AA2EA00C4645C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E15F8EB41A4AA2EA00C4645C /* URLDispatch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = URLDispatch.h; sourceTree = "<group>"; };
@@ -111,6 +115,8 @@
 				E10E28F81A4B00CE00172D6B /* URLDispatchException.m */,
 				E10E28FB1A4BE7C600172D6B /* URLParser.h */,
 				E10E28FC1A4BE7C600172D6B /* URLParser.m */,
+				E10E29031A4C5FE700172D6B /* URLDispatchNavigationViewController.h */,
+				E10E29041A4C5FE700172D6B /* URLDispatchNavigationViewController.m */,
 			);
 			path = URLDispatch;
 			sourceTree = "<group>";
@@ -153,6 +159,7 @@
 				E10E28F51A4AD0E400172D6B /* URLDispatchHistory.h in Headers */,
 				E15F8ED51A4AB7B600C4645C /* BasicURLDispatcher.h in Headers */,
 				E10E28F91A4B00CE00172D6B /* URLDispatchException.h in Headers */,
+				E10E29051A4C5FE700172D6B /* URLDispatchNavigationViewController.h in Headers */,
 				E10E28FD1A4BE7C600172D6B /* URLParser.h in Headers */,
 				E15F8ECC1A4AA46600C4645C /* URLDispatchDelegate.h in Headers */,
 			);
@@ -254,6 +261,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E10E29061A4C5FE700172D6B /* URLDispatchNavigationViewController.m in Sources */,
 				E10E28FA1A4B00CE00172D6B /* URLDispatchException.m in Sources */,
 				E10E28F61A4AD0E400172D6B /* URLDispatchHistory.m in Sources */,
 				E15F8ED61A4AB7B600C4645C /* BasicURLDispatcher.m in Sources */,

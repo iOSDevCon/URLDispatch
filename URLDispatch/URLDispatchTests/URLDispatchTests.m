@@ -114,8 +114,8 @@
 - (id)initWith:(id<URLDispatcher>)dispatcher url:(NSString*)url;
 
 - (void)gotoWithContext:(URLDispatchContext*)context;
-- (void)BackWithContext:(URLDispatchContext*)context;
-- (void)ReloadWithContext:(URLDispatchContext*)context;
+- (void)backWithContext:(URLDispatchContext*)context;
+- (void)reloadWithContext:(URLDispatchContext*)context;
 
 
 @end
@@ -169,7 +169,7 @@
     return _dispatchUrl;
 }
 
--(id<URLDispatcher>)Dispatcher
+-(id<URLDispatcher>)dispatcher
 {
     return _dispatcher;
 }
@@ -179,12 +179,12 @@
     self.gotoContext = context;
 }
 
-- (void)BackWithContext:(URLDispatchContext*)context
+- (void)backWithContext:(URLDispatchContext*)context
 {
     self.backContext = context;
 }
 
-- (void)ReloadWithContext:(URLDispatchContext*)context
+- (void)reloadWithContext:(URLDispatchContext*)context
 {
     self.reloadContext = context;
 }

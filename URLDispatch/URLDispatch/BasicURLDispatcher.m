@@ -105,15 +105,25 @@
     }
 }
 
-- (void)gotoUrl:(NSString*)url withArgs:(NSDictionary*)args;
+- (id<URLDispatchDelegate>)createDispatchDelegateWithUrl:(NSString*)url
+{
+    return [self createDispatchDelegateWithUrl:url dispacher:self];
+}
+
+- (id<URLDispatchDelegate>)createDispatchDelegateWithUrl:(NSString*)url dispacher:(id<URLDispatcher>)dispacher
 {
     [self checkRegisteredUrl:url];
     
     id<URLDispatchDelegateFactory> factory = [_delegateFactories objectForKey:url];
-    id<URLDispatchDelegate> delegate = [factory createWithDispatcher:self url:url];
-    
+    return [factory createWithDispatcher:dispacher url:url];
+}
+
+- (void)dispatchDelegate:(id<URLDispatchDelegate>)delegate withArgs:(NSDictionary*)args
+{
     if (delegate == nil)
-        @throw [URLDispatchException exceptionWithReason:[NSString stringWithFormat:@"URLDispatchDelegate of url %@ creation failed!", url]];
+        @throw [URLDispatchException exceptionWithReason:[NSString stringWithFormat:@"URLDispatchDelegate should not be null"]];
+    
+    NSString *url = delegate.dispatchUrl;
     
     URLDispatchContext *ctx = [[URLDispatchContext alloc] initWith:args];
     ctx.PreviousUrl = _currentDelegate.dispatchUrl;
@@ -127,6 +137,16 @@
     [_currentDelegate gotoWithContext:ctx];
     
     [_history addObject:[[URLDispatchHistory alloc] initWithContext:ctx url:url]];
+}
+
+- (void)gotoUrl:(NSString*)url withArgs:(NSDictionary*)args;
+{
+    id<URLDispatchDelegate> delegate = [self createDispatchDelegateWithUrl:url];
+    
+    if (delegate == nil)
+        @throw [URLDispatchException exceptionWithReason:[NSString stringWithFormat:@"URLDispatchDelegate of url %@ creation failed!", url]];
+    
+    [self dispatchDelegate:delegate withArgs:args];
 }
 
 - (NSArray*)dispatchHistory

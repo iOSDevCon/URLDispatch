@@ -28,6 +28,9 @@
 - (void)changeRegisterFactory:(id<URLDispatchDelegateFactory>)factory;
 - (void)unregisterUrl:(NSString*)url;
 - (void)unregisterFactory:(id<URLDispatchDelegateFactory>)factory;
+- (id<URLDispatchDelegate>)createDispatchDelegateWithUrl:(NSString*)url;
+- (id<URLDispatchDelegate>)createDispatchDelegateWithUrl:(NSString*)url dispacher:(id<URLDispatcher>)dispacher;
+- (void)dispatchDelegate:(id<URLDispatchDelegate>)delegate withArgs:(NSDictionary*)args;
 - (void)gotoUrl:(NSString*)url withArgs:(NSDictionary*)args;
 - (NSArray*)dispatchHistory;
 
