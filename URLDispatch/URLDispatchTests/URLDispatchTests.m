@@ -219,12 +219,12 @@
     BasicURLDispatcher *dispatcher = [[BasicURLDispatcher alloc] init];
     [dispatcher registerFactory:[[MockDispatchableObjectFactory1 alloc] init]];
     [dispatcher gotoUrl:@"Object1" withArgs:nil];
-    MockDispatchableObject1 *mockObj1 = (MockDispatchableObject1*)dispatcher.CurrentDelegate;
+    MockDispatchableObject1 *mockObj1 = (MockDispatchableObject1*)dispatcher.currentDelegate;
     XCTAssertNil(mockObj1.gotoContext.previousUrl);
     XCTAssertEqualObjects(@"Object1", mockObj1.gotoContext.currentUrl);
     
     [dispatcher gotoUrl:@"Object2" withArgs:nil];
-    MockDispatchableObject1 *mockObj2 = (MockDispatchableObject1*)dispatcher.CurrentDelegate;
+    MockDispatchableObject1 *mockObj2 = (MockDispatchableObject1*)dispatcher.currentDelegate;
     XCTAssertEqualObjects(@"Object1", mockObj2.gotoContext.previousUrl);
     XCTAssertEqualObjects(@"Object2", mockObj2.gotoContext.currentUrl);
     

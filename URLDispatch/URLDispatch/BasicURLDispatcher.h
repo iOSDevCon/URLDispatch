@@ -19,8 +19,8 @@
     
 }
 
-@property (readonly) id<URLDispatchDelegate> RootDelegate;
-@property (readonly) id<URLDispatchDelegate> CurrentDelegate;
+@property (readonly) id<URLDispatchDelegate> rootDelegate;
+@property (readonly) id<URLDispatchDelegate> currentDelegate;
 
 - (id)init;
 - (id)initWithRootDelegate:(id<URLDispatchDelegate>)rootDelegate;
