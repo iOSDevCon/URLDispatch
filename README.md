@@ -5,6 +5,5 @@ an iOS framework to dispatch url request to specified ViewController with effect
 
 ##ToDo
 
-1. add unit test
-2. implement a basic URLDispatchDelegate
-3. add a sample project use demo the framework usage
+1. implement a basic URLDispatchDelegate
+2. add a sample project use demo the framework usage

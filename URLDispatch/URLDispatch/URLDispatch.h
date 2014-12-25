@@ -11,6 +11,7 @@
 #import <URLDispatch/URLDispatchHistory.h>
 #import <URLDispatch/URLDispatchException.h>
 #import <URLDispatch/BasicURLDispatcher.h>
+#import <URLDispatch/URLParser.h>
 
 //! Project version number for URLDispatch.
 FOUNDATION_EXPORT double URLDispatchVersionNumber;

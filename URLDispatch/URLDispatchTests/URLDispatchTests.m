@@ -221,28 +221,28 @@
     [dispatcher gotoUrl:@"Object1" withArgs:nil];
     MockDispatchableObject1 *mockObj1 = (MockDispatchableObject1*)dispatcher.CurrentDelegate;
     XCTAssertNil(mockObj1.gotoContext.previousUrl);
-    XCTAssertEqual(@"Object1", mockObj1.gotoContext.currentUrl);
+    XCTAssertEqualObjects(@"Object1", mockObj1.gotoContext.currentUrl);
     
     [dispatcher gotoUrl:@"Object2" withArgs:nil];
     MockDispatchableObject1 *mockObj2 = (MockDispatchableObject1*)dispatcher.CurrentDelegate;
-    XCTAssertEqual(@"Object1", mockObj2.gotoContext.previousUrl);
-    XCTAssertEqual(@"Object2", mockObj2.gotoContext.currentUrl);
+    XCTAssertEqualObjects(@"Object1", mockObj2.gotoContext.previousUrl);
+    XCTAssertEqualObjects(@"Object2", mockObj2.gotoContext.currentUrl);
     
     NSArray *history = [dispatcher dispatchHistory];
     XCTAssertEqual(2, [history count]);
     
     URLDispatchHistory* ctx1 = (URLDispatchHistory*)[history objectAtIndex:0];
-    XCTAssertEqual(@"Object1", ctx1.url);
+    XCTAssertEqualObjects(@"Object1", ctx1.url);
     XCTAssertNotNil(ctx1.context);
     XCTAssertNil(ctx1.context.previousUrl);
-    XCTAssertEqual(@"Object1", ctx1.context.currentUrl);
+    XCTAssertEqualObjects(@"Object1", ctx1.context.currentUrl);
     
     
     URLDispatchHistory* ctx2 = (URLDispatchHistory*)[history objectAtIndex:1];
-    XCTAssertEqual(@"Object2", ctx2.url);
+    XCTAssertEqualObjects(@"Object2", ctx2.url);
     XCTAssertNotNil(ctx2.context);
-    XCTAssertEqual(@"Object1", ctx2.context.previousUrl);
-    XCTAssertEqual(@"Object2", ctx2.context.currentUrl);
+    XCTAssertEqualObjects(@"Object1", ctx2.context.previousUrl);
+    XCTAssertEqualObjects(@"Object2", ctx2.context.currentUrl);
     
 }
 
