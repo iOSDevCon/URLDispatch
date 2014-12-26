@@ -6,12 +6,15 @@
 //  Copyright (c) 2014 iOSDevCon. All rights reserved.
 //
 
-#import <URLDispatch/URLDispatchDelegate.h>
-#import <URLDispatch/URLDispatchContext.h>
 #import <URLDispatch/URLDispatchHistory.h>
+#import <URLDispatch/URLDispatchContext.h>
+#import <URLDispatch/URLDispatchDelegate.h>
 #import <URLDispatch/URLDispatchException.h>
 #import <URLDispatch/BasicURLDispatcher.h>
 #import <URLDispatch/URLParser.h>
+#import <URLDispatch/URLDispatchTargetViewController.h>
+#import <URLDispatch/URLDispatchNavigationViewController.h>
+#import <URLDispatch/SchemeHandler.h>
 
 //! Project version number for URLDispatch.
 FOUNDATION_EXPORT double URLDispatchVersionNumber;

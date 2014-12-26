@@ -75,7 +75,7 @@
     [_innerDispatcher dispatchDelegate:delegate withArgs:args];
 }
 
-- (void)gotoUrl:(NSString*)url withArgs:(NSDictionary*)args
+- (void)dispatchUrl:(NSString*)url withArgs:(NSDictionary*)args
 {
     id<URLDispatchDelegate> delegate = [_innerDispatcher createDispatchDelegateWithUrl:url dispacher:self];
     [_innerDispatcher dispatchDelegate:delegate withArgs:args];

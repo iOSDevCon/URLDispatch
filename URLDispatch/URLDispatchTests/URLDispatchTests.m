@@ -113,7 +113,7 @@
 
 - (id)initWith:(id<URLDispatcher>)dispatcher url:(NSString*)url;
 
-- (void)gotoWithContext:(URLDispatchContext*)context;
+- (void)dispatchedWith:(URLDispatchContext*)context;
 - (void)backWithContext:(URLDispatchContext*)context;
 - (void)reloadWithContext:(URLDispatchContext*)context;
 
@@ -174,7 +174,7 @@
     return _dispatcher;
 }
 
-- (void)gotoWithContext:(URLDispatchContext*)context
+- (void)dispatchedWith:(URLDispatchContext*)context
 {
     self.gotoContext = context;
 }
@@ -218,12 +218,12 @@
     
     BasicURLDispatcher *dispatcher = [[BasicURLDispatcher alloc] init];
     [dispatcher registerFactory:[[MockDispatchableObjectFactory1 alloc] init]];
-    [dispatcher gotoUrl:@"Object1" withArgs:nil];
+    [dispatcher dispatchUrl:@"Object1" withArgs:nil];
     MockDispatchableObject1 *mockObj1 = (MockDispatchableObject1*)dispatcher.currentDelegate;
     XCTAssertNil(mockObj1.gotoContext.previousUrl);
     XCTAssertEqualObjects(@"Object1", mockObj1.gotoContext.currentUrl);
     
-    [dispatcher gotoUrl:@"Object2" withArgs:nil];
+    [dispatcher dispatchUrl:@"Object2" withArgs:nil];
     MockDispatchableObject1 *mockObj2 = (MockDispatchableObject1*)dispatcher.currentDelegate;
     XCTAssertEqualObjects(@"Object1", mockObj2.gotoContext.previousUrl);
     XCTAssertEqualObjects(@"Object2", mockObj2.gotoContext.currentUrl);
@@ -264,9 +264,9 @@
     XCTAssertNoThrow([dispatcher registerFactory:[[MockDispatchableCreateNilFactory alloc] init]]);
     XCTAssertThrowsSpecific([dispatcher registerFactory:[[MockDispatchableCreateNilFactory alloc] init]],URLDispatchException);
     
-    XCTAssertThrowsSpecific([dispatcher gotoUrl:@"Object3" withArgs:nil],URLDispatchException);
+    XCTAssertThrowsSpecific([dispatcher dispatchUrl:@"Object3" withArgs:nil],URLDispatchException);
     
-    XCTAssertThrowsSpecific([dispatcher gotoUrl:nil withArgs:nil],URLDispatchException);
+    XCTAssertThrowsSpecific([dispatcher dispatchUrl:nil withArgs:nil],URLDispatchException);
     
     XCTAssertThrowsSpecific([dispatcher unregisterUrl:@"Object4"],URLDispatchException);
     

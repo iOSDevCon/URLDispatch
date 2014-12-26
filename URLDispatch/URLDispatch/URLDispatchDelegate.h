@@ -16,9 +16,9 @@
 @property (readonly) NSString* dispatchUrl;
 @property (readonly) id<URLDispatcher> dispatcher;
 
-- (void)gotoWithContext:(URLDispatchContext*)context;
-- (void)backWithContext:(URLDispatchContext*)context;
-- (void)reloadWithContext:(URLDispatchContext*)context;
+- (void)dispatchedWith:(URLDispatchContext*)context;
+//- (void)backWithContext:(URLDispatchContext*)context;
+//- (void)reloadWithContext:(URLDispatchContext*)context;
 
 @end
 
@@ -36,7 +36,7 @@
 - (id<URLDispatchDelegate>)createDispatchDelegateWithUrl:(NSString*)url;
 - (id<URLDispatchDelegate>)createDispatchDelegateWithUrl:(NSString*)url dispacher:(id<URLDispatcher>)dispacher;
 - (void)dispatchDelegate:(id<URLDispatchDelegate>)delegate withArgs:(NSDictionary*)args;
-- (void)gotoUrl:(NSString*)url withArgs:(NSDictionary*)args;
+- (void)dispatchUrl:(NSString*)url withArgs:(NSDictionary*)args;
 - (NSArray*)dispatchHistory;
 
 @end

@@ -5,5 +5,4 @@ an iOS framework to dispatch url request to specified ViewController with effect
 
 ##ToDo
 
-1. implement a basic URLDispatchDelegate
-2. add a sample project use demo the framework usage
+1. add a new scheme "ud-msgbox://" to dispatch and show message.

@@ -134,12 +134,12 @@
     }
     _currentDelegate = delegate;
     
-    [_currentDelegate gotoWithContext:ctx];
+    [_currentDelegate dispatchedWith:ctx];
     
     [_history addObject:[[URLDispatchHistory alloc] initWithContext:ctx url:url]];
 }
 
-- (void)gotoUrl:(NSString*)url withArgs:(NSDictionary*)args;
+- (void)dispatchUrl:(NSString*)url withArgs:(NSDictionary*)args;
 {
     id<URLDispatchDelegate> delegate = [self createDispatchDelegateWithUrl:url];
     
