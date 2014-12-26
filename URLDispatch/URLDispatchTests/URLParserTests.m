@@ -34,6 +34,11 @@
     XCTAssertEqual(2,[result.arguments count]);
     XCTAssertEqualObjects(@"v1",[result.arguments objectForKey:@"arg1"]);
     XCTAssertEqualObjects(@"v2",[result.arguments objectForKey:@"arg2"]);
+    XCTAssertEqualObjects(@"arg1",result.argNames[0]);
+    XCTAssertEqualObjects(@"arg2",result.argNames[1]);
+    
+    XCTAssertEqualObjects(@"scheme", result.scheme);
+    XCTAssertNil(result.host);
     
     result = [URLParser parseUrl:[NSURL URLWithString:@"scheme://?arg1=v1&arg2=v2"]];
     
@@ -41,6 +46,9 @@
     XCTAssertEqual(2,[result.arguments count]);
     XCTAssertEqualObjects(@"v1",[result.arguments objectForKey:@"arg1"]);
     XCTAssertEqualObjects(@"v2",[result.arguments objectForKey:@"arg2"]);
+    XCTAssertEqual(2,[result.argNames count]);
+    XCTAssertEqualObjects(@"arg1",result.argNames[0]);
+    XCTAssertEqualObjects(@"arg2",result.argNames[1]);
     
     XCTAssertThrowsSpecific([URLParser parseUrl:[NSURL URLWithString:nil]], URLDispatchException);
     
@@ -50,6 +58,9 @@
     XCTAssertEqual(2,[result.arguments count]);
     XCTAssertEqualObjects(@"v1",[result.arguments objectForKey:@"arg1"]);
     XCTAssertEqualObjects(@"v2",[result.arguments objectForKey:@"arg2"]);
+    XCTAssertEqual(2,[result.argNames count]);
+    XCTAssertEqualObjects(@"arg1",result.argNames[0]);
+    XCTAssertEqualObjects(@"arg2",result.argNames[1]);
     
     result = [URLParser parseUrl:[NSURL URLWithString:@"scheme:///?arg1=&arg2=v2"]];
     
@@ -57,6 +68,9 @@
     XCTAssertEqual(2,[result.arguments count]);
     XCTAssertEqualObjects(@"",[result.arguments objectForKey:@"arg1"]);
     XCTAssertEqualObjects(@"v2",[result.arguments objectForKey:@"arg2"]);
+    XCTAssertEqual(2,[result.argNames count]);
+    XCTAssertEqualObjects(@"arg1",result.argNames[0]);
+    XCTAssertEqualObjects(@"arg2",result.argNames[1]);
     
     result = [URLParser parseUrl:[NSURL URLWithString:@"scheme:///?arg1&arg2=v2"]];
     
@@ -64,25 +78,128 @@
     XCTAssertEqual(2,[result.arguments count]);
     XCTAssertEqualObjects(@"",[result.arguments objectForKey:@"arg1"]);
     XCTAssertEqualObjects(@"v2",[result.arguments objectForKey:@"arg2"]);
+    XCTAssertEqual(2,[result.argNames count]);
+    XCTAssertEqualObjects(@"arg1",result.argNames[0]);
+    XCTAssertEqualObjects(@"arg2",result.argNames[1]);
     
     result = [URLParser parseUrl:[NSURL URLWithString:@"scheme:///?"]];
     
     XCTAssertEqualObjects(@"/",result.path);
     XCTAssertEqual(0,[result.arguments count]);
     XCTAssertEqualObjects(nil,[result.arguments objectForKey:@"arg1"]);
+    XCTAssertEqual(0,[result.argNames count]);
     
     result = [URLParser parseUrl:[NSURL URLWithString:@"scheme://"]];
     
     XCTAssertEqualObjects(@"/",result.path);
     XCTAssertEqual(0,[result.arguments count]);
     XCTAssertEqualObjects(nil,[result.arguments objectForKey:@"arg1"]);
+    XCTAssertEqual(0,[result.argNames count]);
 
     result = [URLParser parseUrl:[NSURL URLWithString:@"scheme:///"]];
     
     XCTAssertEqualObjects(@"/",result.path);
     XCTAssertEqual(0,[result.arguments count]);
     XCTAssertEqualObjects(nil,[result.arguments objectForKey:@"arg1"]);
+    XCTAssertEqual(0,[result.argNames count]);
+    
+    result = [URLParser parseUrl:[NSURL URLWithString:@"dispatch-vc://host/p1/p2?arg1=v1&arg2=v2"]];
+    XCTAssertEqualObjects(@"/p1/p2",result.path);
+    XCTAssertEqual(2,[result.arguments count]);
+    XCTAssertEqualObjects(@"v1",[result.arguments objectForKey:@"arg1"]);
+    XCTAssertEqualObjects(@"v2",[result.arguments objectForKey:@"arg2"]);
+    XCTAssertEqual(2,[result.argNames count]);
+    XCTAssertEqualObjects(@"arg1",result.argNames[0]);
+    XCTAssertEqualObjects(@"arg2",result.argNames[1]);
+    XCTAssertEqualObjects(@"dispatch-vc", result.scheme);
+    XCTAssertEqualObjects(@"host", result.host);
+    
+    result = [URLParser parseUrl:[NSURL URLWithString:@"/host/p1/p2?arg1=v1&arg2=v2"]];
+    XCTAssertEqualObjects(@"/host/p1/p2",result.path);
+    XCTAssertEqual(2,[result.arguments count]);
+    XCTAssertEqualObjects(@"v1",[result.arguments objectForKey:@"arg1"]);
+    XCTAssertEqualObjects(@"v2",[result.arguments objectForKey:@"arg2"]);
+    XCTAssertEqual(2,[result.argNames count]);
+    XCTAssertEqualObjects(@"arg1",result.argNames[0]);
+    XCTAssertEqualObjects(@"arg2",result.argNames[1]);
+    XCTAssertNil(result.scheme);
+    XCTAssertNil(result.host);
+    
+    result = [URLParser parseUrl:[NSURL URLWithString:@"://host/p1/p2?arg1=v1&arg2=v2"]];
+    XCTAssertEqualObjects(@"/p1/p2",result.path);
+    XCTAssertEqual(2,[result.arguments count]);
+    XCTAssertEqualObjects(@"v1",[result.arguments objectForKey:@"arg1"]);
+    XCTAssertEqualObjects(@"v2",[result.arguments objectForKey:@"arg2"]);
+    XCTAssertEqual(2,[result.argNames count]);
+    XCTAssertEqualObjects(@"arg1",result.argNames[0]);
+    XCTAssertEqualObjects(@"arg2",result.argNames[1]);
+    XCTAssertEqualObjects(@"",result.scheme);
+    XCTAssertEqualObjects(@"host", result.host);
 }
 
+- (void)testURLDispatchMeta
+{
+    URLDispatchMeta *meta = [[URLDispatchMeta alloc] initWithUrl:@"dispatch-vc://host/p1/p2?arg1=v1&arg2=v2" name:@"vc"];
+    
+    XCTAssertEqual(3,meta.paths.count);
+    XCTAssertEqualObjects(@"/",meta.paths[0]);
+    XCTAssertEqualObjects(@"p1",meta.paths[1]);
+    XCTAssertEqualObjects(@"p2",meta.paths[2]);
+    XCTAssertEqual(2,meta.arguments.count);
+    XCTAssertEqualObjects(@"arg1",meta.arguments[0]);
+    XCTAssertEqualObjects(@"arg2",meta.arguments[1]);
+    XCTAssertEqualObjects(@"dispatch-vc",meta.scheme);
+    XCTAssertEqualObjects(@"host", meta.host);
+    XCTAssertEqualObjects(@"vc", meta.name);
+    
+    meta = [[URLDispatchMeta alloc] initWithUrl:@"/host/p1/p2?arg1=v1&arg2=v2" name:@"vc-2"];
+    XCTAssertEqual(4,meta.paths.count);
+    XCTAssertEqualObjects(@"/",meta.paths[0]);
+    XCTAssertEqualObjects(@"host",meta.paths[1]);
+    XCTAssertEqualObjects(@"p1",meta.paths[2]);
+    XCTAssertEqualObjects(@"p2",meta.paths[3]);
+    XCTAssertEqual(2,meta.arguments.count);
+    XCTAssertEqualObjects(@"arg1",meta.arguments[0]);
+    XCTAssertEqualObjects(@"arg2",meta.arguments[1]);
+    XCTAssertEqualObjects(@"dispatch-vc",meta.scheme);
+    XCTAssertEqualObjects(@"", meta.host);
+    XCTAssertEqualObjects(@"vc-2", meta.name);
+    
+    meta = [[URLDispatchMeta alloc] initWithUrl:@"://host/p1/p2?arg1=v1&arg2=v2" name:@"vc-3"];
+    XCTAssertEqual(3,meta.paths.count);
+    XCTAssertEqualObjects(@"/",meta.paths[0]);
+    XCTAssertEqualObjects(@"p1",meta.paths[1]);
+    XCTAssertEqualObjects(@"p2",meta.paths[2]);
+    XCTAssertEqual(2,meta.arguments.count);
+    XCTAssertEqualObjects(@"arg1",meta.arguments[0]);
+    XCTAssertEqualObjects(@"arg2",meta.arguments[1]);
+    XCTAssertEqualObjects(@"dispatch-vc",meta.scheme);
+    XCTAssertEqualObjects(@"host", meta.host);
+    XCTAssertEqualObjects(@"vc-3", meta.name);
+    
+    meta = [[URLDispatchMeta alloc] initWithUrl:@":///" name:@"vc-4"];
+    XCTAssertEqual(1,meta.paths.count);
+    XCTAssertEqualObjects(@"/",meta.paths[0]);
+    XCTAssertEqual(0,meta.arguments.count);
+    XCTAssertEqualObjects(@"dispatch-vc",meta.scheme);
+    XCTAssertEqualObjects(@"", meta.host);
+    XCTAssertEqualObjects(@"vc-4", meta.name);
+    
+    meta = [[URLDispatchMeta alloc] initWithUrl:@"//" name:@"vc-5"];
+    XCTAssertEqual(1,meta.paths.count);
+    XCTAssertEqualObjects(@"/",meta.paths[0]);
+    XCTAssertEqual(0,meta.arguments.count);
+    XCTAssertEqualObjects(@"dispatch-vc",meta.scheme);
+    XCTAssertEqualObjects(@"", meta.host);
+    XCTAssertEqualObjects(@"vc-5", meta.name);
+    
+    meta = [[URLDispatchMeta alloc] initWithUrl:@"/" name:@"vc-5"];
+    XCTAssertEqual(1,meta.paths.count);
+    XCTAssertEqualObjects(@"/",meta.paths[0]);
+    XCTAssertEqual(0,meta.arguments.count);
+    XCTAssertEqualObjects(@"dispatch-vc",meta.scheme);
+    XCTAssertEqualObjects(@"", meta.host);
+    XCTAssertEqualObjects(@"vc-5", meta.name);
+}
 
 @end

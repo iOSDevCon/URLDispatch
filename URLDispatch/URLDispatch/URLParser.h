@@ -10,14 +10,20 @@
 
 @interface URLParseResult : NSObject
 {
+    NSString *_scheme;
+    NSString *_host;
     NSString *_path;
     NSDictionary *_args;
+    NSArray *_argNames;
 }
 
+@property (readonly) NSString* scheme;
+@property (readonly) NSString* host;
 @property (readonly) NSString* path;
 @property (readonly) NSDictionary* arguments;
+@property (readonly) NSArray* argNames;
 
-- (id)initWithPath:(NSString*)path arguments:(NSDictionary*)args;
+- (id)initWithScheme:(NSString*)scheme host:(NSString*)host path:(NSString*)path argNames:(NSArray*)argNames arguments:(NSDictionary*)args;
 
 @end
 

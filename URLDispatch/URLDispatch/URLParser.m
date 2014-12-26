@@ -11,6 +11,16 @@
 
 @implementation URLParseResult
 
+-(NSString*)scheme
+{
+    return _scheme;
+}
+
+-(NSString*)host
+{
+    return _host;
+}
+
 -(NSString*)path
 {
     return _path;
@@ -21,13 +31,21 @@
     return _args;
 }
 
-- (id)initWithPath:(NSString*)path arguments:(NSDictionary*)args
+-(NSArray*)argNames
+{
+    return _argNames;
+}
+
+- (id)initWithScheme:(NSString*)scheme host:(NSString*)host path:(NSString*)path argNames:(NSArray*)argNames arguments:(NSDictionary*)args;
 {
     self = [super init];
     if(self)
     {
+        _scheme = scheme;
+        _host = host;
         _path = path;
         _args = args;
+        _argNames = argNames;
     }
     return self;
 }
@@ -42,8 +60,11 @@
         @throw [URLDispatchException exceptionWithReason:@"The url should not be nil"];
     
     NSString* path = url.path == nil || url.path.length == 0 ? @"/" : url.path;
+    NSString* scheme = url.scheme;
+    NSString* host = url.host;
     
     NSMutableDictionary *argDic = [[NSMutableDictionary alloc] init];
+    NSMutableArray *argNames = [[NSMutableArray alloc] init];
     NSArray* args = [url.query componentsSeparatedByString:@"&"];
     
     for (NSString* arg in args) {
@@ -59,9 +80,11 @@
         else {
             [argDic setValue:@"" forKey:[nv objectAtIndex:0]];
         }
+        
+        [argNames addObject:[nv objectAtIndex:0]];
     }
     
-    URLParseResult *result = [[URLParseResult alloc] initWithPath:path arguments:argDic];
+    URLParseResult *result = [[URLParseResult alloc] initWithScheme:scheme host:host path:path argNames:argNames arguments:argDic];
     
     return result;
 }

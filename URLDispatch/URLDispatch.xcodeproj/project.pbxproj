@@ -23,6 +23,8 @@
 		E14AD9541A4D6A47001FE63C /* SchemeHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = E14AD9511A4D6A47001FE63C /* SchemeHandler.h */; };
 		E14AD9571A4D6AB3001FE63C /* SchemeHandlerFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = E14AD9551A4D6AB3001FE63C /* SchemeHandlerFactory.h */; };
 		E14AD9581A4D6AB3001FE63C /* SchemeHandlerFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = E14AD9561A4D6AB3001FE63C /* SchemeHandlerFactory.m */; };
+		E14AD95B1A4DABD7001FE63C /* URLDispatchMeta.h in Headers */ = {isa = PBXBuildFile; fileRef = E14AD9591A4DABD7001FE63C /* URLDispatchMeta.h */; };
+		E14AD95C1A4DABD7001FE63C /* URLDispatchMeta.m in Sources */ = {isa = PBXBuildFile; fileRef = E14AD95A1A4DABD7001FE63C /* URLDispatchMeta.m */; };
 		E15F8EB51A4AA2EA00C4645C /* URLDispatch.h in Headers */ = {isa = PBXBuildFile; fileRef = E15F8EB41A4AA2EA00C4645C /* URLDispatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E15F8EBB1A4AA2EA00C4645C /* URLDispatch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E15F8EAF1A4AA2EA00C4645C /* URLDispatch.framework */; };
 		E15F8EC21A4AA2EA00C4645C /* URLDispatchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E15F8EC11A4AA2EA00C4645C /* URLDispatchTests.m */; };
@@ -61,6 +63,8 @@
 		E14AD9511A4D6A47001FE63C /* SchemeHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SchemeHandler.h; sourceTree = "<group>"; };
 		E14AD9551A4D6AB3001FE63C /* SchemeHandlerFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SchemeHandlerFactory.h; sourceTree = "<group>"; };
 		E14AD9561A4D6AB3001FE63C /* SchemeHandlerFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SchemeHandlerFactory.m; sourceTree = "<group>"; };
+		E14AD9591A4DABD7001FE63C /* URLDispatchMeta.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLDispatchMeta.h; sourceTree = "<group>"; };
+		E14AD95A1A4DABD7001FE63C /* URLDispatchMeta.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = URLDispatchMeta.m; sourceTree = "<group>"; };
 		E15F8EAF1A4AA2EA00C4645C /* URLDispatch.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = URLDispatch.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E15F8EB31A4AA2EA00C4645C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E15F8EB41A4AA2EA00C4645C /* URLDispatch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = URLDispatch.h; sourceTree = "<group>"; };
@@ -145,6 +149,8 @@
 				E10E29041A4C5FE700172D6B /* URLDispatchNavigationViewController.m */,
 				E14AD9371A4D5290001FE63C /* URLDispatchTargetViewController.h */,
 				E14AD9381A4D5290001FE63C /* URLDispatchTargetViewController.m */,
+				E14AD9591A4DABD7001FE63C /* URLDispatchMeta.h */,
+				E14AD95A1A4DABD7001FE63C /* URLDispatchMeta.m */,
 				E15F8EB21A4AA2EA00C4645C /* Supporting Files */,
 			);
 			path = URLDispatch;
@@ -194,6 +200,7 @@
 				E15F8ECC1A4AA46600C4645C /* URLDispatchDelegate.h in Headers */,
 				E14AD9521A4D6A47001FE63C /* MessageSchemeHandler.h in Headers */,
 				E14AD9391A4D5290001FE63C /* URLDispatchTargetViewController.h in Headers */,
+				E14AD95B1A4DABD7001FE63C /* URLDispatchMeta.h in Headers */,
 				E14AD9571A4D6AB3001FE63C /* SchemeHandlerFactory.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -304,6 +311,7 @@
 				E15F8ED21A4AAAD800C4645C /* URLDispatch.m in Sources */,
 				E14AD93A1A4D5290001FE63C /* URLDispatchTargetViewController.m in Sources */,
 				E14AD9531A4D6A47001FE63C /* MessageSchemeHandler.m in Sources */,
+				E14AD95C1A4DABD7001FE63C /* URLDispatchMeta.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
