@@ -151,6 +151,7 @@
     XCTAssertEqualObjects(@"dispatch-vc",meta.scheme);
     XCTAssertEqualObjects(@"host", meta.host);
     XCTAssertEqualObjects(@"vc", meta.name);
+    XCTAssertEqualObjects(@"dispatch-vc://host/p1/p2?arg1&arg2", meta.description);
     
     meta = [[URLDispatchMeta alloc] initWithUrl:@"/host/p1/p2?arg1=v1&arg2=v2" name:@"vc-2"];
     XCTAssertEqual(4,meta.paths.count);
@@ -164,6 +165,7 @@
     XCTAssertEqualObjects(@"dispatch-vc",meta.scheme);
     XCTAssertEqualObjects(@"", meta.host);
     XCTAssertEqualObjects(@"vc-2", meta.name);
+    XCTAssertEqualObjects(@"dispatch-vc:///host/p1/p2?arg1&arg2", meta.description);
     
     meta = [[URLDispatchMeta alloc] initWithUrl:@"://host/p1/p2?arg1=v1&arg2=v2" name:@"vc-3"];
     XCTAssertEqual(3,meta.paths.count);
@@ -184,6 +186,7 @@
     XCTAssertEqualObjects(@"dispatch-vc",meta.scheme);
     XCTAssertEqualObjects(@"", meta.host);
     XCTAssertEqualObjects(@"vc-4", meta.name);
+    XCTAssertEqualObjects(@"dispatch-vc:///", meta.description);
     
     meta = [[URLDispatchMeta alloc] initWithUrl:@"//" name:@"vc-5"];
     XCTAssertEqual(1,meta.paths.count);
@@ -200,6 +203,7 @@
     XCTAssertEqualObjects(@"dispatch-vc",meta.scheme);
     XCTAssertEqualObjects(@"", meta.host);
     XCTAssertEqualObjects(@"vc-5", meta.name);
+    
 }
 
 @end

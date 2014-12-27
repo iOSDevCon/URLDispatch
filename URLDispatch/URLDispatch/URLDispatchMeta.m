@@ -74,4 +74,45 @@
     return _name;
 }
 
+-(NSString*)description
+{
+    if(_description == nil)
+    {
+        NSMutableString *mstr = [[NSMutableString alloc] init];
+        [mstr appendString:_scheme];
+        [mstr appendString:@"://"];
+        [mstr appendString:_host];
+        
+        if (_paths.count <= 1) {
+            [mstr appendString:@"/"];
+        }
+        else
+        {
+            for (NSString* path in _paths) {
+                if([path isEqualToString:@"/"])
+                    continue;
+                [mstr appendString:@"/"];
+                [mstr appendString:path];
+            }
+        }
+        
+        for (int i = 0; i < _arguments.count; i++) {
+            NSString *arg = [_arguments objectAtIndex:i];
+            if( i > 0)
+            {
+                [mstr appendString:@"&"];
+                [mstr appendString:arg];
+            }
+            else
+            {
+                [mstr appendString:@"?"];
+                [mstr appendString:arg];
+            }
+        }
+        _description = [mstr copy];
+    }
+    
+    return _description;
+}
+
 @end

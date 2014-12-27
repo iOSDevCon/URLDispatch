@@ -15,6 +15,7 @@
     NSArray *_paths;
     NSArray *_arguments;
     NSString *_name;
+    NSString *_description;
 }
 
 + (id)dispatchMetaWithUrl:(NSString*)url name:(NSString*)name;
@@ -26,5 +27,20 @@
 @property (readonly) NSArray* arguments;
 @property (readonly) bool hasArgument;
 @property (readonly) NSString* name;
+
+-(NSString*)description;
+
+@end
+
+@interface URLDispatchMetaCollection : NSObject
+
+- (void)addDispatchMeta:(URLDispatchMeta*)dispatchMeta;
+- (void)addDispatchMetaUrl:(NSString*)url;
+- (void)removeDispatchMeta:(URLDispatchMeta*)dispatchMeta;
+- (void)removeDispatchMetaUrl:(NSString*)url;
+
+- (NSArray*)dispatchMetasWithScheme:(NSString*)scheme;
+- (NSArray*)dispatchMetasWithScheme:(NSString*)scheme host:(NSString*)host;
+- (NSArray*)dispatchMetasWithUrl:(NSString*)url;
 
 @end
