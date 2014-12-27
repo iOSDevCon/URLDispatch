@@ -8,6 +8,7 @@
 
 #import <URLDispatch/URLDispatchMeta.h>
 #import <URLDispatch/URLParser.h>
+#import <URLDispatch/URLDispatchException.h>
 
 @implementation URLDispatchMeta
 
@@ -113,6 +114,116 @@
     }
     
     return _description;
+}
+
+@end
+
+
+@implementation URLDispatchMetaCollection
+
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        _schemeIndexedCollection = [[NSMutableDictionary alloc] init];
+        _nameIndexedCollection = [[NSMutableDictionary alloc] init];
+    }
+    return self;
+}
+
+- (void)addDispatchMeta:(URLDispatchMeta*)dispatchMeta
+{
+    if (dispatchMeta == nil) {
+        @throw [URLDispatchException exceptionWithReason:@"dispatch meta should not be nil"];
+    }
+    
+    if (dispatchMeta.name == nil || [dispatchMeta.name length] == 0)
+    {
+        @throw [URLDispatchException exceptionWithReason:@"dispatch meta name should not be nil or empty"];
+    }
+    
+    if ([_nameIndexedCollection objectForKey:dispatchMeta.name] != nil) {
+        @throw [URLDispatchException exceptionWithReason:@"dispatch meta name was registered"];
+    }
+    
+    
+}
+
+
+- (void)addDispatchMetaUrl:(NSString*)url name:(NSString *)name
+{
+    if (url == nil || [url length] == 0) {
+        @throw [URLDispatchException exceptionWithReason:@"dispatch meta url should not be nil or empty"];
+    }
+    
+    if (name == nil || [name length] == 0) {
+        @throw [URLDispatchException exceptionWithReason:@"dispatch meta name should not be nil or empty"];
+    }
+    
+    URLDispatchMeta* meta = [[URLDispatchMeta alloc] initWithUrl:url name:name];
+    [self addDispatchMeta:meta];
+}
+
+- (void)removeDispatchMeta:(URLDispatchMeta*)dispatchMeta
+{
+    if (dispatchMeta == nil) {
+        @throw [URLDispatchException exceptionWithReason:@"dispatch meta should not be nil"];
+    }
+}
+
+- (void)removeDispatchMetaUrl:(NSString*)url
+{
+    if (url == nil || [url length] == 0) {
+        @throw [URLDispatchException exceptionWithReason:@"dispatch meta url should not be nil or empty"];
+    }
+}
+
+- (void)removeDispatchMetaName:(NSString*)name
+{
+    if (name == nil || [name length] == 0) {
+        @throw [URLDispatchException exceptionWithReason:@"dispatch meta name should not be nil or empty"];
+    }
+    
+}
+
+- (NSArray*)dispatchMetasWithScheme:(NSString*)scheme
+{
+    if (scheme == nil || [scheme length] == 0) {
+        @throw [URLDispatchException exceptionWithReason:@"dispatch meta scheme should not be nil or empty"];
+    }
+    
+    return nil;
+}
+
+- (NSArray*)dispatchMetasWithScheme:(NSString*)scheme host:(NSString*)host
+{
+    if (scheme == nil || [scheme length] == 0) {
+        @throw [URLDispatchException exceptionWithReason:@"dispatch meta scheme should not be nil or empty"];
+    }
+    
+    if (host == nil || [host length] == 0) {
+        @throw [URLDispatchException exceptionWithReason:@"dispatch meta host should not be nil or empty"];
+    }
+    
+    return nil;
+}
+
+- (NSArray*)dispatchMetasWithUrl:(NSString*)url
+{
+    if (url == nil || [url length] == 0) {
+        @throw [URLDispatchException exceptionWithReason:@"dispatch meta url should not be nil or empty"];
+    }
+    
+    return nil;
+}
+
+- (URLDispatchMeta*)dispatchMetaWithName:(NSString*)name
+{
+    if (name == nil || [name length] == 0) {
+        @throw [URLDispatchException exceptionWithReason:@"dispatch meta name should not be nil or empty"];
+    }
+    
+    return [_nameIndexedCollection objectForKey:name];
 }
 
 @end

@@ -33,14 +33,23 @@
 @end
 
 @interface URLDispatchMetaCollection : NSObject
+{
+    //use NSMutableDictionary to implement the collection, maybe use other structure to reimplement it in the future
+    NSMutableDictionary *_schemeIndexedCollection;
+    NSMutableDictionary *_nameIndexedCollection;
+}
+
+- (id)init;
 
 - (void)addDispatchMeta:(URLDispatchMeta*)dispatchMeta;
-- (void)addDispatchMetaUrl:(NSString*)url;
+- (void)addDispatchMetaUrl:(NSString*)url name:(NSString*)name;
 - (void)removeDispatchMeta:(URLDispatchMeta*)dispatchMeta;
 - (void)removeDispatchMetaUrl:(NSString*)url;
+- (void)removeDispatchMetaName:(NSString*)name;
 
 - (NSArray*)dispatchMetasWithScheme:(NSString*)scheme;
 - (NSArray*)dispatchMetasWithScheme:(NSString*)scheme host:(NSString*)host;
 - (NSArray*)dispatchMetasWithUrl:(NSString*)url;
+- (URLDispatchMeta*)dispatchMetaWithName:(NSString*)name;
 
 @end
