@@ -30,7 +30,8 @@
 {
     self = [super init];
     _delegateFactories = [[NSMutableDictionary alloc] init];
-    _history = [[NSMutableArray alloc] init];
+    _dispatchHistory = [[NSMutableArray alloc] init];
+    _dispatchMetas = [[URLDispatchMetaCollection alloc] init];
     return self;
 }
 
@@ -50,32 +51,33 @@
     if(factory == nil)
         @throw [URLDispatchException exceptionWithReason:@"URLDispatchDelegateFactory should not be nil"];
     
-    if (factory.dispatchUrls == nil)
-        @throw [URLDispatchException exceptionWithReason:@"URLDispatchDelegateFactory's dispatchUrls property should not be nil"];
+    if (factory.dispatchMetas == nil)
+        @throw [URLDispatchException exceptionWithReason:@"URLDispatchDelegateFactory's dispatchMetas property should not be nil"];
     
-    if([factory.dispatchUrls count] == 0)
-        @throw [URLDispatchException exceptionWithReason:@"URLDispatchDelegateFactory's dispatchUrls should not be empty"];
+    if([factory.dispatchMetas count] == 0)
+        @throw [URLDispatchException exceptionWithReason:@"URLDispatchDelegateFactory's dispatchMetas should not be empty"];
 }
 
-- (void)checkRegisteredUrl:(NSString*)url
+- (void)checkRegisteredName:(NSString*)name
 {
-    if(url == nil || [url length] == 0)
-        @throw [URLDispatchException exceptionWithReason:@"The factory's url should not be nil or empty"];
+    if(name == nil || [name length] == 0)
+        @throw [URLDispatchException exceptionWithReason:@"The DispatchMeta name should not be nil or empty"];
     
-    if(![_delegateFactories valueForKey:url])
-        @throw [URLDispatchException exceptionWithReason:[NSString stringWithFormat:@"The factory's url %@ was not registered", url]];
+    if(![_delegateFactories valueForKey:name])
+        @throw [URLDispatchException exceptionWithReason:[NSString stringWithFormat:@"The DispatchMeta name %@ was not registered", name]];
 }
 
 - (void)registerFactory:(id<URLDispatchDelegateFactory>)factory
 {
     [self checkFactory:factory];
     
-    for (NSString *url in factory.dispatchUrls)
+    for (URLDispatchMeta *dispatchMeta in factory.dispatchMetas)
     {
         //skip registered url, should warn the user for the duplicated url
-        if([_delegateFactories valueForKey:url])
-            @throw [URLDispatchException exceptionWithReason:[NSString stringWithFormat:@"The factory's url %@ was registered", url]];
-        [_delegateFactories setValue:factory forKey:url];
+        if([_delegateFactories valueForKey:dispatchMeta.name])
+            @throw [URLDispatchException exceptionWithReason:[NSString stringWithFormat:@"The url dispatch name %@ was registered", dispatchMeta.name]];
+        [_delegateFactories setValue:factory forKey:dispatchMeta.name];
+        [_dispatchMetas addDispatchMeta:dispatchMeta];
     }
 }
 
@@ -83,16 +85,39 @@
 {
     [self checkFactory:factory];
     
-    for (NSString* url in factory.dispatchUrls) {
-        [_delegateFactories setValue:factory forKey:url];
+    for (URLDispatchMeta* dispatchMeta in factory.dispatchMetas) {
+    
+        [_dispatchMetas removeDispatchMetaName:dispatchMeta.name];
+    }
+    
+    for (URLDispatchMeta* dispatchMeta in factory.dispatchMetas) {
+        
+        [_delegateFactories setValue:factory forKey:dispatchMeta.name];
+        [_dispatchMetas addDispatchMeta:dispatchMeta];
     }
 }
 
-- (void)unregisterUrl:(NSString*)url
+- (void)unregisterName:(NSString*)name
 {
-    [self checkRegisteredUrl:url];
+    [self checkRegisteredName:name];
     
-    [_delegateFactories removeObjectForKey:url];
+    [_delegateFactories removeObjectForKey:name];
+    [_dispatchMetas removeDispatchMetaName:name];
+}
+
+- (void)unregisterUrl:(NSString *)url
+{
+    NSArray* metas = [_dispatchMetas dispatchMetasWithUrl:url];
+    
+    if (metas == nil) {
+        @throw [URLDispatchException exceptionWithReason:[NSString stringWithFormat:@"url %@ is not registered!", url]];
+    }
+    
+    for(URLDispatchMeta *meta in metas)
+    {
+        [_delegateFactories removeObjectForKey:meta.name];
+        [_dispatchMetas removeDispatchMetaName:meta.name];
+    }
 }
 
 //have an issue that unregister the regsitered url with another factroy with the same url
@@ -100,22 +125,46 @@
 {
     [self checkFactory:factory];
     
-    for (NSString* url in factory.dispatchUrls) {
-        [self unregisterUrl:url];
+    for (URLDispatchMeta* meta in factory.dispatchMetas) {
+        [self unregisterName:meta.name];
     }
 }
 
-- (id<URLDispatchDelegate>)createDispatchDelegateWithUrl:(NSString*)url
+- (id<URLDispatchDelegate>)createDispatchDelegateWithName:(NSString *)name
+{
+    return [self createDispatchDelegateWithName:name dispacher:self];
+}
+
+- (id<URLDispatchDelegate>)createDispatchDelegateWithName:(NSString *)name dispacher:(id<URLDispatcher>)dispacher
+{
+    [self checkRegisteredName:name];
+    
+    id<URLDispatchDelegateFactory> factory = [_delegateFactories objectForKey:name];
+    return [factory createWithDispatcher:dispacher name:name];
+}
+
+- (NSArray*)createDispatchDelegateWithUrl:(NSString *)url
 {
     return [self createDispatchDelegateWithUrl:url dispacher:self];
 }
 
-- (id<URLDispatchDelegate>)createDispatchDelegateWithUrl:(NSString*)url dispacher:(id<URLDispatcher>)dispacher
+- (NSArray*)createDispatchDelegateWithUrl:(NSString *)url dispacher:(id<URLDispatcher>)dispacher
 {
-    [self checkRegisteredUrl:url];
+    NSArray* metas = [_dispatchMetas dispatchMetasWithUrl:url];
     
-    id<URLDispatchDelegateFactory> factory = [_delegateFactories objectForKey:url];
-    return [factory createWithDispatcher:dispacher url:url];
+    NSMutableArray *results = [[NSMutableArray alloc] init];
+    
+    for (URLDispatchMeta *meta in metas) {
+        id<URLDispatchDelegateFactory> factory = [_delegateFactories objectForKey:meta.name];
+        id<URLDispatchDelegate> delegate = [factory createWithDispatcher:dispacher name:meta.name];
+        
+        if(delegate == nil)
+            @throw [URLDispatchException exceptionWithReason:[NSString stringWithFormat:@"delegate for %@ create failed!", meta.name]];
+        
+        [results addObject:delegate];
+    }
+    
+    return results;
 }
 
 - (void)dispatchDelegate:(id<URLDispatchDelegate>)delegate withArgs:(NSDictionary*)args
@@ -136,22 +185,34 @@
     
     [_currentDelegate dispatchedWith:ctx];
     
-    [_history addObject:[[URLDispatchHistory alloc] initWithContext:ctx url:url]];
+    [_dispatchHistory addObject:[[URLDispatchHistory alloc] initWithContext:ctx url:url]];
 }
 
-- (void)dispatchUrl:(NSString*)url withArgs:(NSDictionary*)args;
+- (void)dispatchUrl:(NSString*)url withArgs:(NSDictionary*)args
 {
-    id<URLDispatchDelegate> delegate = [self createDispatchDelegateWithUrl:url];
+    NSArray* delegates = [self createDispatchDelegateWithUrl:url];
+    
+    if (delegates == nil || [delegates count] == 0)
+        @throw [URLDispatchException exceptionWithReason:[NSString stringWithFormat:@"URLDispatchDelegate of url %@ creation failed!", url]];
+    
+    for (id<URLDispatchDelegate> delegate in delegates) {
+        [self dispatchDelegate:delegate withArgs:args];
+    }
+}
+
+- (void)dispatchName:(NSString *)name withArgs:(NSDictionary *)args
+{
+    id<URLDispatchDelegate> delegate = [self createDispatchDelegateWithName:name];
     
     if (delegate == nil)
-        @throw [URLDispatchException exceptionWithReason:[NSString stringWithFormat:@"URLDispatchDelegate of url %@ creation failed!", url]];
+        @throw [URLDispatchException exceptionWithReason:[NSString stringWithFormat:@"URLDispatchDelegate of name %@ creation failed!", name]];
     
     [self dispatchDelegate:delegate withArgs:args];
 }
 
 - (NSArray*)dispatchHistory
 {
-    return _history;
+    return _dispatchHistory;
 }
 
 @end

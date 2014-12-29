@@ -40,7 +40,7 @@
 
 @implementation MockDispatchableNullUrlFactory
 
--(NSArray*) dispatchUrls
+- (NSArray*)dispatchMetas
 {
     return nil;
 }
@@ -50,11 +50,16 @@
     return nil;
 }
 
+-(id<URLDispatchDelegate>)createWithDispatcher:(id<URLDispatcher>)dispatcher name:(NSString*)name
+{
+    return nil;
+}
+
 @end
 
 @implementation MockDispatchableEmptyUrlFactory
 
--(NSArray*) dispatchUrls
+- (NSArray*)dispatchMetas
 {
     return @[];
 }
@@ -63,27 +68,33 @@
 
 @implementation MockDispatchableDupUrlFactory
 
--(NSArray*) dispatchUrls
+-(NSArray*) dispatchMetas
 {
-    return @[@"Object1"];
+    URLDispatchMeta* meta = [[URLDispatchMeta alloc] initWithUrl:@"/Object1" name:@"Object1"];
+    
+    return @[meta];
 }
 
 @end
 
 @implementation MockDispatchableCreateNilFactory
 
--(NSArray*) dispatchUrls
+-(NSArray*) dispatchMetas
 {
-    return @[@"Object3"];
+    URLDispatchMeta* meta = [[URLDispatchMeta alloc] initWithUrl:@"/Object3" name:@"Object3"];
+    
+    return @[meta];
 }
 
 @end
 
 @implementation MockDispatchableObject4Factory
 
--(NSArray*) dispatchUrls
+-(NSArray*) dispatchMetas
 {
-    return @[@"Object4"];
+    URLDispatchMeta* meta = [[URLDispatchMeta alloc] initWithUrl:@"/Object4" name:@"Object4"];
+    
+    return @[meta];
 }
 
 @end
@@ -92,9 +103,10 @@
 {
 }
 
-@property (readonly) NSArray* dispatchUrls;
+@property (readonly) NSArray* dispatchMetas;
 
 -(id<URLDispatchDelegate>)createWithDispatcher:(id<URLDispatcher>)navigator url:(NSString*)url;
+-(id<URLDispatchDelegate>)createWithDispatcher:(id<URLDispatcher>)navigator name:(NSString*)name;
 
 @end
 
@@ -108,14 +120,14 @@
 @property (readonly) id<URLDispatcher> Dispatcher;
 
 @property URLDispatchContext *gotoContext;
-@property URLDispatchContext *backContext;
-@property URLDispatchContext *reloadContext;
+//@property URLDispatchContext *backContext;
+//@property URLDispatchContext *reloadContext;
 
 - (id)initWith:(id<URLDispatcher>)dispatcher url:(NSString*)url;
 
 - (void)dispatchedWith:(URLDispatchContext*)context;
-- (void)backWithContext:(URLDispatchContext*)context;
-- (void)reloadWithContext:(URLDispatchContext*)context;
+//- (void)backWithContext:(URLDispatchContext*)context;
+//- (void)reloadWithContext:(URLDispatchContext*)context;
 
 
 @end
@@ -127,22 +139,40 @@
 
 @implementation MockDispatchableObjectFactory1
 
--(NSArray*) dispatchUrls
+-(NSArray*) dispatchMetas
 {
-    return @[@"Object1",@"Object2"];
+    URLDispatchMeta* meta1 = [[URLDispatchMeta alloc] initWithUrl:@"/Object1" name:@"Object1"];
+    URLDispatchMeta* meta2 = [[URLDispatchMeta alloc] initWithUrl:@"/Object2" name:@"Object2"];
+    
+    
+    return @[meta1,meta2];
 }
 
 
 -(id<URLDispatchDelegate>)createWithDispatcher:(id<URLDispatcher>)dispatcher url:(NSString*)url
 {
-    if ([url isEqualToString:@"Object1"]) {
+    if ([url isEqualToString:@"/Object1"]) {
         
         return [[MockDispatchableObject1 alloc] initWith:dispatcher url:url];
         
     }
-    else if ([url isEqualToString:@"Object2"])
+    else if ([url isEqualToString:@"/Object2"])
     {
         return [[MockDispatchableObject2 alloc] initWith:dispatcher url:url];
+    }
+    return nil;
+}
+
+-(id<URLDispatchDelegate>)createWithDispatcher:(id<URLDispatcher>)dispatcher name:(NSString*)name
+{
+    if ([name isEqualToString:@"Object1"]) {
+        
+        return [[MockDispatchableObject1 alloc] initWith:dispatcher url:@"/Object1"];
+        
+    }
+    else if ([name isEqualToString:@"Object2"])
+    {
+        return [[MockDispatchableObject2 alloc] initWith:dispatcher url:@"/Object2"];
     }
     return nil;
 }
@@ -153,8 +183,6 @@
 @implementation MockDispatchableObject1
 
 @synthesize gotoContext;
-@synthesize backContext;
-@synthesize reloadContext;
 
 - (id)initWith:(id<URLDispatcher>)dispatcher url:(NSString*)url
 {
@@ -179,15 +207,6 @@
     self.gotoContext = context;
 }
 
-- (void)backWithContext:(URLDispatchContext*)context
-{
-    self.backContext = context;
-}
-
-- (void)reloadWithContext:(URLDispatchContext*)context
-{
-    self.reloadContext = context;
-}
 
 @end
 
@@ -218,31 +237,31 @@
     
     BasicURLDispatcher *dispatcher = [[BasicURLDispatcher alloc] init];
     [dispatcher registerFactory:[[MockDispatchableObjectFactory1 alloc] init]];
-    [dispatcher dispatchUrl:@"Object1" withArgs:nil];
+    [dispatcher dispatchUrl:@"/Object1" withArgs:nil];
     MockDispatchableObject1 *mockObj1 = (MockDispatchableObject1*)dispatcher.currentDelegate;
     XCTAssertNil(mockObj1.gotoContext.previousUrl);
-    XCTAssertEqualObjects(@"Object1", mockObj1.gotoContext.currentUrl);
+    XCTAssertEqualObjects(@"/Object1", mockObj1.gotoContext.currentUrl);
     
-    [dispatcher dispatchUrl:@"Object2" withArgs:nil];
+    [dispatcher dispatchUrl:@"/Object2" withArgs:nil];
     MockDispatchableObject1 *mockObj2 = (MockDispatchableObject1*)dispatcher.currentDelegate;
-    XCTAssertEqualObjects(@"Object1", mockObj2.gotoContext.previousUrl);
-    XCTAssertEqualObjects(@"Object2", mockObj2.gotoContext.currentUrl);
+    XCTAssertEqualObjects(@"/Object1", mockObj2.gotoContext.previousUrl);
+    XCTAssertEqualObjects(@"/Object2", mockObj2.gotoContext.currentUrl);
     
     NSArray *history = [dispatcher dispatchHistory];
     XCTAssertEqual(2, [history count]);
     
     URLDispatchHistory* ctx1 = (URLDispatchHistory*)[history objectAtIndex:0];
-    XCTAssertEqualObjects(@"Object1", ctx1.url);
+    XCTAssertEqualObjects(@"/Object1", ctx1.url);
     XCTAssertNotNil(ctx1.context);
     XCTAssertNil(ctx1.context.previousUrl);
-    XCTAssertEqualObjects(@"Object1", ctx1.context.currentUrl);
+    XCTAssertEqualObjects(@"/Object1", ctx1.context.currentUrl);
     
     
     URLDispatchHistory* ctx2 = (URLDispatchHistory*)[history objectAtIndex:1];
-    XCTAssertEqualObjects(@"Object2", ctx2.url);
+    XCTAssertEqualObjects(@"/Object2", ctx2.url);
     XCTAssertNotNil(ctx2.context);
-    XCTAssertEqualObjects(@"Object1", ctx2.context.previousUrl);
-    XCTAssertEqualObjects(@"Object2", ctx2.context.currentUrl);
+    XCTAssertEqualObjects(@"/Object1", ctx2.context.previousUrl);
+    XCTAssertEqualObjects(@"/Object2", ctx2.context.currentUrl);
     
 }
 
@@ -264,17 +283,17 @@
     XCTAssertNoThrow([dispatcher registerFactory:[[MockDispatchableCreateNilFactory alloc] init]]);
     XCTAssertThrowsSpecific([dispatcher registerFactory:[[MockDispatchableCreateNilFactory alloc] init]],URLDispatchException);
     
-    XCTAssertThrowsSpecific([dispatcher dispatchUrl:@"Object3" withArgs:nil],URLDispatchException);
+    XCTAssertThrowsSpecific([dispatcher dispatchUrl:@"/Object3" withArgs:nil],URLDispatchException);
     
     XCTAssertThrowsSpecific([dispatcher dispatchUrl:nil withArgs:nil],URLDispatchException);
     
-    XCTAssertThrowsSpecific([dispatcher unregisterUrl:@"Object4"],URLDispatchException);
+    XCTAssertThrowsSpecific([dispatcher unregisterUrl:@"/Object4"],URLDispatchException);
     
     XCTAssertThrowsSpecific([dispatcher unregisterUrl:nil],URLDispatchException);
     
     XCTAssertThrowsSpecific([dispatcher unregisterFactory:nil],URLDispatchException);
     
-    XCTAssertNoThrow([dispatcher unregisterUrl:@"Object3"]);
+    XCTAssertNoThrow([dispatcher unregisterUrl:@"/Object3"]);
     
     XCTAssertNoThrow([dispatcher registerFactory:[[MockDispatchableCreateNilFactory alloc] init]]);
     

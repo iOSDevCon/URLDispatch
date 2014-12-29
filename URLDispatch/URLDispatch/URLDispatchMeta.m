@@ -253,6 +253,7 @@
         @throw [URLDispatchException exceptionWithReason:@"dispatch meta name should not be nil or empty"];
     }
     
+    [_nameIndexedCollection removeObjectForKey:name];
 }
 
 - (NSArray*)dispatchMetasWithScheme:(NSString*)scheme
