@@ -27,6 +27,7 @@
         _scheme = result.scheme == nil || result.scheme.length == 0 ? @"dispatch-vc" : result.scheme;
         _host = result.host == nil ? @"" : result.host;
         
+        //create path array
         NSMutableArray *pathArray = [[NSMutableArray alloc] init];
         [pathArray addObject:@"/"];
         NSArray* paths = [result.path componentsSeparatedByString:@"/"];
@@ -38,7 +39,39 @@
         }
         _paths = pathArray;
         
+        //create path str
+        if(_paths.count <= 1)
+        {
+            _allPathsStr = @"/";
+        }
+        else
+        {
+            NSMutableString *buff = [[NSMutableString alloc] init];
+            
+            for(int i = 1; i < _paths.count; i++)
+            {
+                [buff appendString:@"/"];
+                [buff appendString:[_paths objectAtIndex:i]];
+            }
+            _allPathsStr = buff;
+        }
+        
         _arguments = [[NSMutableArray alloc] initWithArray:result.argNames];
+        
+        //create arg str
+        if(_arguments.count > 0)
+        {
+            NSMutableString *buff = [[NSMutableString alloc] init];
+            [buff appendString:[_arguments objectAtIndex:0]];
+            for(int i = 1; i < _arguments.count; i++)
+            {
+                [buff appendString:@"&"];
+                [buff appendString:[_arguments objectAtIndex:i]];
+            }
+            _allArgsStr = buff;
+        }
+        else
+            _allArgsStr = @"";
         
         _name = name;
     }
@@ -53,6 +86,21 @@
 -(NSString*)host
 {
     return _host;
+}
+
+-(NSString*)allPathsStr
+{
+    return _allPathsStr;
+}
+
+-(NSString*)allArgsStr
+{
+    return _allArgsStr;
+}
+
+-(NSString*)allPathsAndArgsStr
+{
+    return [NSString stringWithFormat:@"%@?%@",_allPathsStr,_allArgsStr];
 }
 
 -(NSArray*)paths
@@ -146,6 +194,27 @@
         @throw [URLDispatchException exceptionWithReason:@"dispatch meta name was registered"];
     }
     
+    NSMutableDictionary* hostCollection = [_schemeIndexedCollection objectForKey:dispatchMeta.scheme];
+    if (hostCollection == nil) {
+        hostCollection = [[NSMutableDictionary alloc] init];
+        [_schemeIndexedCollection setObject:hostCollection forKey:dispatchMeta.scheme];
+    }
+    
+    NSMutableDictionary* pathCollection = [hostCollection objectForKey:dispatchMeta.host];
+    if(pathCollection == nil){
+        pathCollection = [[NSMutableDictionary alloc] init];
+        [hostCollection setObject:pathCollection forKey:dispatchMeta.host];
+    }
+    
+    NSString *pathKey = dispatchMeta.allPathsAndArgsStr;
+    
+    URLDispatchMeta* meta = [pathCollection objectForKey:pathKey];
+    if(meta == nil)
+    {
+        [pathCollection setObject:dispatchMeta forKey:pathKey];
+    }
+    
+    [_nameIndexedCollection setObject:dispatchMeta forKey:dispatchMeta.name];
     
 }
 
@@ -192,7 +261,23 @@
         @throw [URLDispatchException exceptionWithReason:@"dispatch meta scheme should not be nil or empty"];
     }
     
-    return nil;
+    NSDictionary *hostCollection = [_schemeIndexedCollection objectForKey:scheme];
+    if (hostCollection == nil)
+        return nil;
+    
+    NSMutableArray *foundMetas = [[NSMutableArray alloc] init];
+    
+    for(NSDictionary* pathCollection in hostCollection.allKeys)
+    {
+        [foundMetas addObjectsFromArray:pathCollection.allValues];
+    }
+    
+    if([foundMetas count] == 0)
+    {
+        return nil;
+    }
+    
+    return foundMetas;
 }
 
 - (NSArray*)dispatchMetasWithScheme:(NSString*)scheme host:(NSString*)host
@@ -205,7 +290,15 @@
         @throw [URLDispatchException exceptionWithReason:@"dispatch meta host should not be nil or empty"];
     }
     
-    return nil;
+    NSDictionary *hostCollection = [_schemeIndexedCollection objectForKey:scheme];
+    if (hostCollection == nil)
+        return nil;
+    
+    NSDictionary *pathCollection = [hostCollection objectForKey:host];
+    if(pathCollection == nil)
+        return nil;
+
+    return [pathCollection allValues];
 }
 
 - (NSArray*)dispatchMetasWithUrl:(NSString*)url
@@ -214,7 +307,20 @@
         @throw [URLDispatchException exceptionWithReason:@"dispatch meta url should not be nil or empty"];
     }
     
-    return nil;
+    URLDispatchMeta *meta = [URLDispatchMeta dispatchMetaWithUrl:url name:@"temp"];
+    NSDictionary *hostCollection = [_schemeIndexedCollection objectForKey:meta.scheme];
+    if (hostCollection == nil)
+        return nil;
+    
+    NSDictionary *pathCollection = [hostCollection objectForKey:meta.host];
+    if(pathCollection == nil)
+        return nil;
+
+    URLDispatchMeta *foundMeta = [pathCollection objectForKey:meta.allPathsAndArgsStr];
+    if (foundMeta == nil)
+        return nil;
+    
+    return @[foundMeta];
 }
 
 - (URLDispatchMeta*)dispatchMetaWithName:(NSString*)name

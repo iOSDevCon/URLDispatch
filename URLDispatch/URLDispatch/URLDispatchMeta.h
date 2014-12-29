@@ -12,6 +12,8 @@
 {
     NSString *_scheme;
     NSString *_host;
+    NSString *_allPathsStr;
+    NSString *_allArgsStr;
     NSArray *_paths;
     NSArray *_arguments;
     NSString *_name;
@@ -23,6 +25,9 @@
 
 @property (readonly) NSString* scheme;
 @property (readonly) NSString* host;
+@property (readonly) NSString* allPathsStr;
+@property (readonly) NSString* allArgsStr;
+@property (readonly) NSString* allPathsAndArgsStr;
 @property (readonly) NSArray* paths;
 @property (readonly) NSArray* arguments;
 @property (readonly) bool hasArgument;
