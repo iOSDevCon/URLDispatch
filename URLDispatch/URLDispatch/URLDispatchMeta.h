@@ -18,11 +18,13 @@
     NSArray *_arguments;
     NSString *_name;
     NSString *_description;
+    NSString *_url;
 }
 
 + (id)dispatchMetaWithUrl:(NSString*)url name:(NSString*)name;
 - (id)initWithUrl:(NSString*)url name:(NSString*)name;
 
+@property (readonly) NSString* url;
 @property (readonly) NSString* scheme;
 @property (readonly) NSString* host;
 @property (readonly) NSString* allPathsStr;

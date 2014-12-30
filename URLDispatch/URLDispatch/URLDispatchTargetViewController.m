@@ -10,14 +10,20 @@
 
 @implementation URLDispatchTargetViewController
 
-- (id)initWithUrl:(NSString*)url withDispatcher:(id<URLDispatcher>)dispatcher
+- (id)initWithUrl:(NSString*)url meta:(URLDispatchMeta*)meta withDispatcher:(id<URLDispatcher>)dispatcher
 {
     self = [super init];
     if (self) {
         _dispatcher = dispatcher;
         _dispatchUrl = url;
+        _dispatchMeta = meta;
     }
     return self;
+}
+
+- (URLDispatchMeta*)dispatchMeta
+{
+    return _dispatchMeta;
 }
 
 - (NSString*) dispatchUrl

@@ -8,11 +8,13 @@
 
 #import <Foundation/Foundation.h>
 #import <URLDispatch/URLDispatchContext.h>
+#import <URLDispatch/URLDispatchMeta.h>
 
 @protocol URLDispatcher;
 
 @protocol URLDispatchDelegate <NSObject>
 
+@property (readonly) URLDispatchMeta* dispatchMeta;
 @property (readonly) NSString* dispatchUrl;
 @property (readonly) id<URLDispatcher> dispatcher;
 

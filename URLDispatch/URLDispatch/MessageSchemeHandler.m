@@ -7,22 +7,41 @@
 //
 
 #import <URLDispatch/MessageSchemeHandler.h>
+#import <UIKit/UIKit.h>
 
 @implementation MessageSchemeHandler
 
 -(NSString*) dispatchUrl
 {
-    return @"ud-msgbox";
+    return _dispatchUrl;
 }
 
 -(id<URLDispatcher>)dispatcher
 {
-    return nil;
+    return _dispatcher;
+}
+
+-(URLDispatchMeta*)meta
+{
+    return _dispatchMeta;
+}
+
+- (id)initWithUrl:(NSString*)url meta:(URLDispatchMeta *)meta withDispatcher:(id<URLDispatcher>)dispatcher
+{
+    self = [super init];
+    if (self) {
+        _dispatchUrl = url;
+        _dispatcher = dispatcher;
+        _dispatchMeta = meta;
+    }
+    return self;
 }
 
 - (void)dispatchedWith:(URLDispatchContext*)context
 {
-    
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:(NSString*)[context argumentOfName:@"title"]
+                                                         message:(NSString*)[context argumentOfName:@"message"] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    [alertView show];
 }
 
 @end

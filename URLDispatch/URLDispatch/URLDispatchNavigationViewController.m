@@ -104,8 +104,12 @@
 {
     id<URLDispatchDelegate> delegate = [_innerDispatcher createDispatchDelegateWithName:name dispacher:self];
     [_innerDispatcher dispatchDelegate:delegate withArgs:args];
-    UIViewController* ctrl = (UIViewController*)_innerDispatcher.currentDelegate;
-    [self pushViewController:ctrl animated:TRUE];
+    
+    if([_innerDispatcher.currentDelegate.dispatchMeta.scheme isEqualToString:@"url-vc"])
+    {
+        UIViewController* ctrl = (UIViewController*)_innerDispatcher.currentDelegate;
+        [self pushViewController:ctrl animated:TRUE];
+    }
 }
 
 - (void)dispatchUrl:(NSString*)url withArgs:(NSDictionary*)args
@@ -114,8 +118,12 @@
     
     for (id<URLDispatchDelegate> delegate in delegates) {
         [_innerDispatcher dispatchDelegate:delegate withArgs:args];
-        UIViewController* ctrl = (UIViewController*)_innerDispatcher.currentDelegate;
-        [self pushViewController:ctrl animated:TRUE];
+        
+        if([_innerDispatcher.currentDelegate.dispatchMeta.scheme isEqualToString:@"url-vc"])
+        {
+            UIViewController* ctrl = (UIViewController*)_innerDispatcher.currentDelegate;
+            [self pushViewController:ctrl animated:TRUE];
+        }
     }
 }
 

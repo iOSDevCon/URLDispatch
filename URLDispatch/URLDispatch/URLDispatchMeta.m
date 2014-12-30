@@ -23,6 +23,7 @@
     self = [super init];
     if (self) {
         
+        _url = url;
         URLParseResult *result = [URLParser parseUrl:[NSURL URLWithString:url]];
         _scheme = result.scheme == nil || result.scheme.length == 0 ? @"dispatch-vc" : result.scheme;
         _host = result.host == nil ? @"" : result.host;
@@ -76,6 +77,11 @@
         _name = name;
     }
     return self;
+}
+
+-(NSString*)url
+{
+    return _url;
 }
 
 -(NSString*)scheme

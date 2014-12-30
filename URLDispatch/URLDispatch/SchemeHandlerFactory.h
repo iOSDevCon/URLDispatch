@@ -10,10 +10,15 @@
 #import <URLDispatch/URLDispatchDelegate.h>
 
 @interface SchemeHandlerFactory : NSObject<URLDispatchDelegateFactory>
+{
+    NSDictionary *metaNameIndex;
+    NSDictionary *metaUrlIndex;
+}
 
-@property (readonly) NSArray* dispatchUrls;
+@property (readonly) NSArray* dispatchMetas;
 
+-(id)init;
 -(id<URLDispatchDelegate>)createWithDispatcher:(id<URLDispatcher>)dispatcher url:(NSString*)url;
-
+-(id<URLDispatchDelegate>)createWithDispatcher:(id<URLDispatcher>)dispatcher name:(NSString *)name;
 
 @end

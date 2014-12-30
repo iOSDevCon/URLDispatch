@@ -24,7 +24,7 @@
 
 - (void)gotoScene1
 {
-    [self.dispatcher dispatchUrl:@"/Demo1/Scene1" withArgs:@{@"title":@"Scene1"}];
+    [self.dispatcher dispatchUrl:@"url-vc://Demo1/Scene1" withArgs:@{@"title":@"Scene1"}];
 }
 
 

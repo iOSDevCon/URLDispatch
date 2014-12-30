@@ -8,15 +8,19 @@
 
 #import <UIKit/UIKit.h>
 #import <URLDispatch/URLDispatchDelegate.h>
+#import <URLDispatch/URLDispatchMeta.h>
 
 @interface URLDispatchTargetViewController : UIViewController<URLDispatchDelegate>
 {
+    URLDispatchMeta* _dispatchMeta;
     __weak id<URLDispatcher> _dispatcher;
     NSString *_dispatchUrl;
 }
 
-- (id)initWithUrl:(NSString*)url withDispatcher:(id<URLDispatcher>)dispatcher;
+- (id)initWithUrl:(NSString*)url meta:(URLDispatchMeta*)meta withDispatcher:(id<URLDispatcher>)dispatcher;
 
+
+@property (readonly) URLDispatchMeta* dispatchMeta;
 @property (readonly) NSString* dispatchUrl;
 @property (readonly) id<URLDispatcher> dispatcher;
 

@@ -30,7 +30,7 @@
     UIWindow* window = [UIApplication sharedApplication].windows[0];
     window.rootViewController = ctrl;
     
-    [_myDispatcher dispatchUrl:@"/Demo1" withArgs:@{@"title":@"Demo1 /Demo1"}];
+    [_myDispatcher dispatchUrl:@"url-vc://Demo1" withArgs:@{@"title":@"Demo1 /Demo1"}];
 }
 
 - (void)didReceiveMemoryWarning {

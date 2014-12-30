@@ -10,6 +10,7 @@
 #import <URLDispatch/URLDispatchContext.h>
 #import <URLDispatch/URLDispatchHistory.h>
 #import <URLDispatch/URLDispatchException.h>
+#import "SchemeHandlerFactory.h"
 #include <assert.h>
 
 
@@ -53,6 +54,8 @@
     {
         _rootDelegate = rootDelegate;
         _currentDelegate = rootDelegate;
+        
+        [self registerFactory:[[SchemeHandlerFactory alloc] init]];
     }
     return self;
 }
