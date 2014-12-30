@@ -26,10 +26,21 @@
     return _currentDelegate;
 }
 
+- (NSUInteger)factoryCount
+{
+    return [_delegateFactoryArray count];
+}
+
+- (NSUInteger)metaCount
+{
+    return [_dispatchMetas metaCount];
+}
+
 - (id)init
 {
     self = [super init];
     _delegateFactories = [[NSMutableDictionary alloc] init];
+    _delegateFactoryArray = [[NSMutableArray alloc] init];
     _dispatchHistory = [[NSMutableArray alloc] init];
     _dispatchMetas = [[URLDispatchMetaCollection alloc] init];
     return self;
@@ -77,6 +88,10 @@
         if([_delegateFactories valueForKey:dispatchMeta.name])
             @throw [URLDispatchException exceptionWithReason:[NSString stringWithFormat:@"The url dispatch name %@ was registered", dispatchMeta.name]];
         [_delegateFactories setValue:factory forKey:dispatchMeta.name];
+        if(![_delegateFactoryArray containsObject:factory])
+        {
+            [_delegateFactoryArray addObject:factory];
+        }
         [_dispatchMetas addDispatchMeta:dispatchMeta];
     }
 }
@@ -92,17 +107,35 @@
     
     for (URLDispatchMeta* dispatchMeta in factory.dispatchMetas) {
         
+        id oldFactory = [_delegateFactories objectForKey:dispatchMeta.name];
+        if([_delegateFactoryArray containsObject:oldFactory])
+        {
+            [_delegateFactoryArray removeObject:oldFactory];;
+        }
+        
         [_delegateFactories setValue:factory forKey:dispatchMeta.name];
         [_dispatchMetas addDispatchMeta:dispatchMeta];
     }
+    [_delegateFactoryArray addObject:factory];
 }
 
 - (void)unregisterName:(NSString*)name
 {
     [self checkRegisteredName:name];
     
-    [_delegateFactories removeObjectForKey:name];
-    [_dispatchMetas removeDispatchMetaName:name];
+    id<URLDispatchDelegateFactory> oldFactory = [_delegateFactories objectForKey:name];
+    [_delegateFactoryArray removeObject:oldFactory];
+    
+    for (NSString* key in [_delegateFactories allKeys]) {
+        if ([_delegateFactories objectForKey:key] == oldFactory) {
+            [_delegateFactories removeObjectForKey:key];
+        }
+    }
+
+    for(URLDispatchMeta *meta in oldFactory.dispatchMetas)
+    {
+        [_dispatchMetas removeDispatchMeta:meta];
+    }
 }
 
 - (void)unregisterUrl:(NSString *)url
@@ -115,8 +148,7 @@
     
     for(URLDispatchMeta *meta in metas)
     {
-        [_delegateFactories removeObjectForKey:meta.name];
-        [_dispatchMetas removeDispatchMetaName:meta.name];
+        [self unregisterName:meta.name];
     }
 }
 

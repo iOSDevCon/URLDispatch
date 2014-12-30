@@ -256,13 +256,11 @@
     XCTAssertNil(ctx1.context.previousUrl);
     XCTAssertEqualObjects(@"/Object1", ctx1.context.currentUrl);
     
-    
     URLDispatchHistory* ctx2 = (URLDispatchHistory*)[history objectAtIndex:1];
     XCTAssertEqualObjects(@"/Object2", ctx2.url);
     XCTAssertNotNil(ctx2.context);
     XCTAssertEqualObjects(@"/Object1", ctx2.context.previousUrl);
     XCTAssertEqualObjects(@"/Object2", ctx2.context.currentUrl);
-    
 }
 
 - (void)testBasicURLDispatcherByName {
@@ -289,7 +287,6 @@
     XCTAssertNil(ctx1.context.previousUrl);
     XCTAssertEqualObjects(@"/Object1", ctx1.context.currentUrl);
     
-    
     URLDispatchHistory* ctx2 = (URLDispatchHistory*)[history objectAtIndex:1];
     XCTAssertEqualObjects(@"/Object2", ctx2.url);
     XCTAssertNotNil(ctx2.context);
@@ -309,10 +306,15 @@
     XCTAssertThrowsSpecific([dispatcher changeRegisterFactory:[[MockDispatchableEmptyUrlFactory alloc] init]],URLDispatchException);
     
     XCTAssertNoThrow([dispatcher registerFactory:[[MockDispatchableObjectFactory1 alloc] init]]);
+    XCTAssertEqual(1, dispatcher.factoryCount);
+    XCTAssertEqual(2, dispatcher.metaCount);
     
     XCTAssertThrowsSpecific([dispatcher registerFactory:[[MockDispatchableDupUrlFactory alloc] init]],URLDispatchException);
  
     XCTAssertNoThrow([dispatcher registerFactory:[[MockDispatchableCreateNilFactory alloc] init]]);
+    XCTAssertEqual(2, dispatcher.factoryCount);
+    XCTAssertEqual(3, dispatcher.metaCount);
+    
     XCTAssertThrowsSpecific([dispatcher registerFactory:[[MockDispatchableCreateNilFactory alloc] init]],URLDispatchException);
     
     XCTAssertThrowsSpecific([dispatcher dispatchUrl:@"/Object3" withArgs:nil],URLDispatchException);
@@ -326,13 +328,24 @@
     XCTAssertThrowsSpecific([dispatcher unregisterFactory:nil],URLDispatchException);
     
     XCTAssertNoThrow([dispatcher unregisterUrl:@"/Object3"]);
+    XCTAssertEqual(1, dispatcher.factoryCount);
+    XCTAssertEqual(2, dispatcher.metaCount);
     
     XCTAssertNoThrow([dispatcher registerFactory:[[MockDispatchableCreateNilFactory alloc] init]]);
+    XCTAssertEqual(2, dispatcher.factoryCount);
+    XCTAssertEqual(3, dispatcher.metaCount);
     
     XCTAssertNoThrow([dispatcher registerFactory:[[MockDispatchableObject4Factory alloc] init]]);
-    
+    XCTAssertEqual(3, dispatcher.factoryCount);
+    XCTAssertEqual(4, dispatcher.metaCount);
     
     XCTAssertNoThrow([dispatcher unregisterFactory:[[MockDispatchableCreateNilFactory alloc] init]]);
+    XCTAssertEqual(2, dispatcher.factoryCount);
+    XCTAssertEqual(3, dispatcher.metaCount);
+    
+    XCTAssertNoThrow([dispatcher unregisterName:@"Object1"]);
+    XCTAssertEqual(1, dispatcher.factoryCount);
+    XCTAssertEqual(1, dispatcher.metaCount);
 }
 
 - (void)testPerformanceExample {

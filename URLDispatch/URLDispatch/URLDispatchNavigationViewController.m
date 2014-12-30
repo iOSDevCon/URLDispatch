@@ -20,6 +20,16 @@
     return [_innerDispatcher currentDelegate];
 }
 
+- (NSUInteger)factoryCount
+{
+    return [_innerDispatcher factoryCount];
+}
+
+- (NSUInteger)metaCount
+{
+    return [_innerDispatcher metaCount];
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -50,6 +60,11 @@
     [_innerDispatcher changeRegisterFactory:navigateableFactory];
 }
 
+- (void)unregisterName:(NSString *)name
+{
+    [_innerDispatcher unregisterName:name];
+}
+
 - (void)unregisterUrl:(NSString*)url
 {
     [_innerDispatcher unregisterUrl:url];
@@ -60,14 +75,24 @@
     [_innerDispatcher unregisterFactory:navigateableFactory];
 }
 
-- (id<URLDispatchDelegate>)createDispatchDelegateWithUrl:(NSString*)url
+- (NSArray*)createDispatchDelegateWithUrl:(NSString*)url
 {
     return [_innerDispatcher createDispatchDelegateWithUrl:url];
 }
 
-- (id<URLDispatchDelegate>)createDispatchDelegateWithUrl:(NSString*)url dispacher:(id<URLDispatcher>)dispacher
+- (id<URLDispatchDelegate>)createDispatchDelegateWithName:(NSString*)name
+{
+    return [_innerDispatcher createDispatchDelegateWithName:name];
+}
+
+- (NSArray*)createDispatchDelegateWithUrl:(NSString*)url dispacher:(id<URLDispatcher>)dispacher
 {
     return [_innerDispatcher createDispatchDelegateWithUrl:url dispacher:dispacher];
+}
+
+- (id<URLDispatchDelegate>)createDispatchDelegateWithName:(NSString*)name dispacher:(id<URLDispatcher>)dispacher
+{
+    return [_innerDispatcher createDispatchDelegateWithName:name dispacher:dispacher];
 }
 
 - (void)dispatchDelegate:(id<URLDispatchDelegate>)delegate withArgs:(NSDictionary*)args
@@ -75,12 +100,23 @@
     [_innerDispatcher dispatchDelegate:delegate withArgs:args];
 }
 
-- (void)dispatchUrl:(NSString*)url withArgs:(NSDictionary*)args
+- (void)dispatchName:(NSString *)name withArgs:(NSDictionary*)args
 {
-    id<URLDispatchDelegate> delegate = [_innerDispatcher createDispatchDelegateWithUrl:url dispacher:self];
+    id<URLDispatchDelegate> delegate = [_innerDispatcher createDispatchDelegateWithName:name dispacher:self];
     [_innerDispatcher dispatchDelegate:delegate withArgs:args];
     UIViewController* ctrl = (UIViewController*)_innerDispatcher.currentDelegate;
     [self pushViewController:ctrl animated:TRUE];
+}
+
+- (void)dispatchUrl:(NSString*)url withArgs:(NSDictionary*)args
+{
+    NSArray* delegates = [_innerDispatcher createDispatchDelegateWithUrl:url dispacher:self];
+    
+    for (id<URLDispatchDelegate> delegate in delegates) {
+        [_innerDispatcher dispatchDelegate:delegate withArgs:args];
+        UIViewController* ctrl = (UIViewController*)_innerDispatcher.currentDelegate;
+        [self pushViewController:ctrl animated:TRUE];
+    }
 }
 
 - (NSArray*)dispatchHistory

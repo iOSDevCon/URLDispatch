@@ -179,6 +179,11 @@
     return self;
 }
 
+- (NSUInteger)metaCount
+{
+    return [_nameIndexedCollection count];
+}
+
 - (void)addDispatchMeta:(URLDispatchMeta*)dispatchMeta
 {
     if (dispatchMeta == nil) {
@@ -218,7 +223,6 @@
     
 }
 
-
 - (void)addDispatchMetaUrl:(NSString*)url name:(NSString *)name
 {
     if (url == nil || [url length] == 0) {
@@ -238,6 +242,35 @@
     if (dispatchMeta == nil) {
         @throw [URLDispatchException exceptionWithReason:@"dispatch meta should not be nil"];
     }
+
+    NSMutableDictionary *hostCollection = [_schemeIndexedCollection objectForKey:dispatchMeta.scheme];
+    if (hostCollection == nil) {
+        @throw [URLDispatchException exceptionWithReason:[NSString stringWithFormat:@"scheme name %@ is not found", dispatchMeta.scheme]];
+    }
+    
+    NSMutableDictionary *pathCollection = [hostCollection objectForKey:dispatchMeta.host];
+    if (pathCollection == nil) {
+        @throw [URLDispatchException exceptionWithReason:[NSString stringWithFormat:@"host name %@ is not found in scheme %@", dispatchMeta.host, dispatchMeta.scheme]];
+    }
+    
+    if([pathCollection objectForKey:dispatchMeta.allPathsAndArgsStr] == nil)
+    {
+        @throw [URLDispatchException exceptionWithReason:[NSString stringWithFormat:@"path %@ is not found in scheme %@ host %@", dispatchMeta.allPathsAndArgsStr, dispatchMeta.host, dispatchMeta.scheme]];
+    }
+    
+    [pathCollection removeObjectForKey:dispatchMeta.allPathsAndArgsStr];
+    
+    //remove empty dictionaries
+    if([pathCollection count] == 0)
+    {
+        [hostCollection removeObjectForKey:dispatchMeta.host];
+        if([hostCollection count] == 0)
+        {
+            [_nameIndexedCollection removeObjectForKey:dispatchMeta.scheme];
+        }
+    }
+    
+    [_nameIndexedCollection removeObjectForKey:dispatchMeta.name];
 }
 
 - (void)removeDispatchMetaUrl:(NSString*)url
@@ -245,6 +278,10 @@
     if (url == nil || [url length] == 0) {
         @throw [URLDispatchException exceptionWithReason:@"dispatch meta url should not be nil or empty"];
     }
+    
+    URLDispatchMeta *meta = [[URLDispatchMeta alloc] initWithUrl:url name:@"temp"];
+    
+    [self removeDispatchMeta:meta];
 }
 
 - (void)removeDispatchMetaName:(NSString*)name
@@ -253,7 +290,13 @@
         @throw [URLDispatchException exceptionWithReason:@"dispatch meta name should not be nil or empty"];
     }
     
-    [_nameIndexedCollection removeObjectForKey:name];
+    URLDispatchMeta *meta = [_nameIndexedCollection objectForKey:name];
+    
+    if(meta == nil) {
+        @throw [URLDispatchException exceptionWithReason:[NSString stringWithFormat:@"the meta name %@ is not found", name]];
+    }
+    
+    [self removeDispatchMeta:meta];
 }
 
 - (NSArray*)dispatchMetasWithScheme:(NSString*)scheme

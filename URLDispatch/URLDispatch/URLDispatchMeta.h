@@ -44,6 +44,8 @@
     NSMutableDictionary *_nameIndexedCollection;
 }
 
+@property (readonly) NSUInteger metaCount;
+
 - (id)init;
 
 - (void)addDispatchMeta:(URLDispatchMeta*)dispatchMeta;

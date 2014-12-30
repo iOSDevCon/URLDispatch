@@ -18,13 +18,17 @@
     
     //use URLDispatchMeta name to map the delegatefactory.
     NSMutableDictionary* _delegateFactories;
-    URLDispatchMetaCollection *_dispatchMetas;
+    NSMutableArray* _delegateFactoryArray;
     
+    URLDispatchMetaCollection *_dispatchMetas;
+
     NSMutableArray* _dispatchHistory;
 }
 
 @property (readonly) id<URLDispatchDelegate> rootDelegate;
 @property (readonly) id<URLDispatchDelegate> currentDelegate;
+@property (readonly) NSUInteger factoryCount;
+@property (readonly) NSUInteger metaCount;
 
 - (id)init;
 - (id)initWithRootDelegate:(id<URLDispatchDelegate>)rootDelegate;

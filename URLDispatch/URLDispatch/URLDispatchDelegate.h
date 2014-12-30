@@ -28,7 +28,9 @@
 
 @property (readonly) id<URLDispatchDelegate> rootDelegate;
 @property (readonly) id<URLDispatchDelegate> currentDelegate;
-    
+@property (readonly) NSUInteger factoryCount;
+@property (readonly) NSUInteger metaCount;
+
 - (void)registerFactory:(id<URLDispatchDelegateFactory>)navigateableFactory;
 - (void)changeRegisterFactory:(id<URLDispatchDelegateFactory>)navigateableFactory;
 
@@ -41,7 +43,6 @@
 
 - (NSArray*)createDispatchDelegateWithUrl:(NSString*)url;
 - (NSArray*)createDispatchDelegateWithUrl:(NSString*)url dispacher:(id<URLDispatcher>)dispacher;
-
 
 - (void)dispatchDelegate:(id<URLDispatchDelegate>)delegate withArgs:(NSDictionary*)args;
 
