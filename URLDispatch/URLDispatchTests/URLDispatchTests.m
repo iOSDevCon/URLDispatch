@@ -265,6 +265,38 @@
     
 }
 
+- (void)testBasicURLDispatcherByName {
+    // This is an example of a functional test case.
+    
+    BasicURLDispatcher *dispatcher = [[BasicURLDispatcher alloc] init];
+    [dispatcher registerFactory:[[MockDispatchableObjectFactory1 alloc] init]];
+    [dispatcher dispatchName:@"Object1" withArgs:nil];
+    MockDispatchableObject1 *mockObj1 = (MockDispatchableObject1*)dispatcher.currentDelegate;
+    XCTAssertNil(mockObj1.gotoContext.previousUrl);
+    XCTAssertEqualObjects(@"/Object1", mockObj1.gotoContext.currentUrl);
+    
+    [dispatcher dispatchName:@"Object2" withArgs:nil];
+    MockDispatchableObject1 *mockObj2 = (MockDispatchableObject1*)dispatcher.currentDelegate;
+    XCTAssertEqualObjects(@"/Object1", mockObj2.gotoContext.previousUrl);
+    XCTAssertEqualObjects(@"/Object2", mockObj2.gotoContext.currentUrl);
+    
+    NSArray *history = [dispatcher dispatchHistory];
+    XCTAssertEqual(2, [history count]);
+    
+    URLDispatchHistory* ctx1 = (URLDispatchHistory*)[history objectAtIndex:0];
+    XCTAssertEqualObjects(@"/Object1", ctx1.url);
+    XCTAssertNotNil(ctx1.context);
+    XCTAssertNil(ctx1.context.previousUrl);
+    XCTAssertEqualObjects(@"/Object1", ctx1.context.currentUrl);
+    
+    
+    URLDispatchHistory* ctx2 = (URLDispatchHistory*)[history objectAtIndex:1];
+    XCTAssertEqualObjects(@"/Object2", ctx2.url);
+    XCTAssertNotNil(ctx2.context);
+    XCTAssertEqualObjects(@"/Object1", ctx2.context.previousUrl);
+    XCTAssertEqualObjects(@"/Object2", ctx2.context.currentUrl);
+}
+
 - (void)testBasicURLDispatcherExp {
     
     BasicURLDispatcher *dispatcher = [[BasicURLDispatcher alloc] init];
