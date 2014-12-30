@@ -12,9 +12,13 @@
 
 @implementation Demo1DispatchDelegateFactory
 
--(NSArray*)dispatchUrls
+-(NSArray*)dispatchMetas
 {
-    return @[@"/Demo1",@"/Demo1/Scene1"];
+    URLDispatchMeta *meta1 = [[URLDispatchMeta alloc] initWithUrl:@"/Demo1" name:@"Demo1"];
+    URLDispatchMeta *meta2 = [[URLDispatchMeta alloc] initWithUrl:@"/Demo1/Scene1" name:@"Demo1-Scene1"];
+    
+    
+    return @[meta1,meta2];
 }
 
 -(id<URLDispatchDelegate>)createWithDispatcher:(id<URLDispatcher>)dispatcher url:(NSString*)url
@@ -27,6 +31,21 @@
     else if([url isEqualToString:@"/Demo1/Scene1"])
     {
         Demo1Scene1ViewController* ctrl = [[Demo1Scene1ViewController alloc] initWithUrl:url withDispatcher:dispatcher];
+        return ctrl;
+    }
+    return nil;
+}
+
+-(id<URLDispatchDelegate>)createWithDispatcher:(id<URLDispatcher>)dispatcher name:(NSString*)name
+{
+    if([name isEqualToString:@"Demo1"])
+    {
+        Demo1ViewController* ctrl = [[Demo1ViewController alloc] initWithUrl:@"/Demo1" withDispatcher:dispatcher];
+        return ctrl;
+    }
+    else if([name isEqualToString:@"Demo1-Scene1"])
+    {
+        Demo1Scene1ViewController* ctrl = [[Demo1Scene1ViewController alloc] initWithUrl:@"/Demo1/Scene1" withDispatcher:dispatcher];
         return ctrl;
     }
     return nil;

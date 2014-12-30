@@ -11,9 +11,10 @@
 
 @interface Demo1DispatchDelegateFactory : NSObject<URLDispatchDelegateFactory>
 
-@property (readonly) NSArray* dispatchUrls;
+@property (readonly) NSArray* dispatchMetas;
 
 -(id<URLDispatchDelegate>)createWithDispatcher:(id<URLDispatcher>)dispatcher url:(NSString*)url;
+-(id<URLDispatchDelegate>)createWithDispatcher:(id<URLDispatcher>)dispatcher name:(NSString*)name;
 
 
 @end

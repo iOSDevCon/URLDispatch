@@ -15,7 +15,7 @@
 #import <URLDispatch/URLDispatchTargetViewController.h>
 #import <URLDispatch/URLDispatchNavigationViewController.h>
 #import <URLDispatch/URLDispatchMeta.h>
-#import <URLDispatch/SchemeHandler.h>
+//#import <URLDispatch/SchemeHandler.h>
 
 //! Project version number for URLDispatch.
 FOUNDATION_EXPORT double URLDispatchVersionNumber;

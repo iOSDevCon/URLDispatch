@@ -22,7 +22,8 @@
     // Do any additional setup after loading the view, typically from a nib.
 
     BasicURLDispatcher* basicDispatcher = [[BasicURLDispatcher alloc] initWithRootDelegate:self];
-    _myDispatcher = [[URLDispatchNavigationViewController alloc] initWithInnerDispacher:basicDispatcher];
+    _myDispatcher = [[URLDispatchNavigationViewController alloc]
+            initWithInnerDispacher:basicDispatcher];
     [_myDispatcher registerFactory:[[Demo1DispatchDelegateFactory alloc] init]];
     UIViewController *ctrl = (UIViewController*)_myDispatcher;
     

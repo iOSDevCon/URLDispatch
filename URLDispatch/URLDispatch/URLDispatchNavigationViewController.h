@@ -14,6 +14,8 @@
     id<URLDispatcher> _innerDispatcher;
 }
 
+- (id)initWithInnerDispacher:(id<URLDispatcher>)innerDispatcher;
+
 @property (readonly) id<URLDispatchDelegate> rootDelegate;
 @property (readonly) id<URLDispatchDelegate> currentDelegate;
 @property (readonly) NSUInteger factoryCount;
@@ -31,7 +33,6 @@
 
 - (NSArray*)createDispatchDelegateWithUrl:(NSString*)url;
 - (NSArray*)createDispatchDelegateWithUrl:(NSString*)url dispacher:(id<URLDispatcher>)dispacher;
-
 
 - (void)dispatchDelegate:(id<URLDispatchDelegate>)delegate withArgs:(NSDictionary*)args;
 

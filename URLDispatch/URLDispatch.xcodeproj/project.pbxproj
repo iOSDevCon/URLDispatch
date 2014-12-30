@@ -23,7 +23,7 @@
 		E14AD9541A4D6A47001FE63C /* SchemeHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = E14AD9511A4D6A47001FE63C /* SchemeHandler.h */; };
 		E14AD9571A4D6AB3001FE63C /* SchemeHandlerFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = E14AD9551A4D6AB3001FE63C /* SchemeHandlerFactory.h */; };
 		E14AD9581A4D6AB3001FE63C /* SchemeHandlerFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = E14AD9561A4D6AB3001FE63C /* SchemeHandlerFactory.m */; };
-		E14AD95B1A4DABD7001FE63C /* URLDispatchMeta.h in Headers */ = {isa = PBXBuildFile; fileRef = E14AD9591A4DABD7001FE63C /* URLDispatchMeta.h */; };
+		E14AD95B1A4DABD7001FE63C /* URLDispatchMeta.h in Headers */ = {isa = PBXBuildFile; fileRef = E14AD9591A4DABD7001FE63C /* URLDispatchMeta.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E14AD95C1A4DABD7001FE63C /* URLDispatchMeta.m in Sources */ = {isa = PBXBuildFile; fileRef = E14AD95A1A4DABD7001FE63C /* URLDispatchMeta.m */; };
 		E15F8EB51A4AA2EA00C4645C /* URLDispatch.h in Headers */ = {isa = PBXBuildFile; fileRef = E15F8EB41A4AA2EA00C4645C /* URLDispatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E15F8EBB1A4AA2EA00C4645C /* URLDispatch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E15F8EAF1A4AA2EA00C4645C /* URLDispatch.framework */; };
